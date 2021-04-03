@@ -3,6 +3,7 @@
 #include <vector>
 #include <stack>
 #include <string>
+#include <chrono>
 
 using namespace std;
 
@@ -37,7 +38,7 @@ int main()
 {
     stack<Node *> s;
     Tree t1;
-    string puzzle = "TW";
+    string puzzle = "TWOFUR";
     //Node n2, n3, n4, n5, n6, n7, n8, n9, n10, n11, n12, n13;
 
     Node *emptynode = new Node;
@@ -67,13 +68,15 @@ int main()
         //cout << t1.getRoot()->C[i] << endl;
         s.push(t1.getRoot()->C[i]);
     }*/
-    int counter = 0;
+    //int counter = 0;
+
+    auto time1 = chrono::high_resolution_clock::now();
     while (!s.empty())
     {
 
         Node *current = s.top();
         s.pop();
-        cout << "Popped" << endl;
+        //cout << "Popped" << endl;
         for (int i = 0; i < 10; i++)
         {
             int index = puzzle.find(current->c) + 1;
@@ -93,7 +96,7 @@ int main()
                 {
                     current->C[i]->key_value->insert(pair<char, int>(itr->first, itr->second));
                 }
-                cout << endl;
+                //cout << endl;
 
                 current->C[i]->a = i;
                 current->C[i]->c = password;
@@ -101,20 +104,20 @@ int main()
                 current->C[i]->key_value->insert(pair<char, int>(password, i));
 
                 map<char, int>::iterator itrx;
-                cout << "\nThe map " << current->C[i]->c << current->C[i]->a << " is : \n";
-                cout << "\tKEY\tELEMENT\n";
-                for (itrx = current->C[i]->key_value->begin(); itrx != current->C[i]->key_value->end(); ++itrx)
+                //cout << "\nThe map " << current->C[i]->c << current->C[i]->a << " is : \n";
+                //cout << "\tKEY\tELEMENT\n";
+                /*for (itrx = current->C[i]->key_value->begin(); itrx != current->C[i]->key_value->end(); ++itrx)
                 {
                     //cout << current->C[i]->a << endl;
 
                     cout << '\t' << itrx->first << '\t' << itrx->second << '\n';
                 }
-                cout << endl;
+                cout << endl;*/
                 /*if (counter < 13)
                     s.push(current->C[i]);*/
                 s.push(current->C[i]);
-                cout << "Pushed" << endl;
-                counter++;
+                //cout << "Pushed" << endl;
+                //counter++;
             }
         }
     }
@@ -138,5 +141,9 @@ int main()
         }
 
     }*/
+    auto time2 = chrono::high_resolution_clock::now();
+    chrono::duration<double, milli> duration = time2 - time1;
+
+    cout << "Total running time is: " << duration.count() << " milliseconds." << endl;
     cout << "END" << endl;
 }
