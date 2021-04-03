@@ -4,9 +4,63 @@
 #include <stack>
 #include <string>
 #include <chrono>
+#include <cmath>
 
 using namespace std;
 
+void test(string s1, string s2, string s3)
+{
+    map<char, int> a;
+    a.insert(pair<char, int>('T', 7));
+    a.insert(pair<char, int>('W', 3));
+    a.insert(pair<char, int>('O', 9));
+    a.insert(pair<char, int>('F', 1));
+    a.insert(pair<char, int>('U', 6));
+    a.insert(pair<char, int>('R', 8));
+
+    cout << a['T'] << endl;
+    cout << a['W'] << endl;
+    cout << a['O'] << endl;
+    cout << a['F'] << endl;
+    cout << a['U'] << endl;
+    cout << a['R'] << endl;
+
+    int number1 = 0;
+
+    for (int i = 0; i < s1.length(); i++)
+    {
+        int digit = a[s1[i]];
+        int ust = (s1.length() - (i + 1));
+        int temp = digit * pow(10, ust);
+        number1 = number1 + temp;
+    }
+    //cout << number1 << endl;
+
+    int number2 = 0;
+    for (int i = 0; i < s2.length(); i++)
+    {
+        int digit = a[s2[i]];
+        int ust = (s2.length() - (i + 1));
+        int temp = digit * pow(10, ust);
+        number2 = number2 + temp;
+    }
+    //cout << number2 << endl;
+
+    int number3 = 0;
+    for (int i = 0; i < s3.length(); i++)
+    {
+        int digit = a[s3[i]];
+        int ust = (s3.length() - (i + 1));
+        int temp = digit * pow(10, ust);
+        number3 = number3 + temp;
+    }
+    //cout << number3 << endl;
+
+    if (number1 + number2 == number3)
+        cout << "SUCCESFUL" << endl;
+    else
+        cout << "FAIL" << endl;
+}
 class Node
 {
 private:
@@ -36,19 +90,19 @@ public:
 
 int main()
 {
-    stack<Node *> s;
+    string s1 = "TWO"; // argv ile okuma
+    string s2 = "TWO";
+    string s3 = "FOUR";
+
     Tree t1;
-    string puzzle = "TWOFUR";
-    //Node n2, n3, n4, n5, n6, n7, n8, n9, n10, n11, n12, n13;
+
+    stack<Node *> s;
+
+    string puzzle = "TWOFUR"; // set'e çevirilebilir.
+    //string puzzle = "SENDMORY";
 
     Node *emptynode = new Node;
     emptynode->key_value = new map<char, int>;
-    /*emptynode->key_value->insert(pair<char, int>('T', 0));
-    emptynode->key_value->insert(pair<char, int>('W', 0));
-    emptynode->key_value->insert(pair<char, int>('O', 0));
-    emptynode->key_value->insert(pair<char, int>('F', 0));
-    emptynode->key_value->insert(pair<char, int>('U', 0));
-    emptynode->key_value->insert(pair<char, int>('R', 0));*/
     emptynode->c = '-';
 
     if (!t1.getRoot())
@@ -57,18 +111,6 @@ int main()
     }
 
     s.push(emptynode);
-    /*for (int i = 0; i < 3; i++)
-    {
-        int x = s.size();
-        if (t1.getRoot()->C[i] == NULL)
-        {
-            cout << "NULL" << endl;
-        }
-
-        //cout << t1.getRoot()->C[i] << endl;
-        s.push(t1.getRoot()->C[i]);
-    }*/
-    //int counter = 0;
 
     auto time1 = chrono::high_resolution_clock::now();
     while (!s.empty())
@@ -80,13 +122,10 @@ int main()
         for (int i = 0; i < 10; i++)
         {
             int index = puzzle.find(current->c) + 1;
-            //char password = '!';s
             if (index < puzzle.length())
             {
                 char password = puzzle[index];
-                //Node *a = new Node;
                 current->C[i] = new Node;
-                //Node *n1 = new Node;
                 current->C[i]->key_value = new map<char, int>;
 
                 map<char, int>::iterator itr;
@@ -100,7 +139,6 @@ int main()
 
                 current->C[i]->a = i;
                 current->C[i]->c = password;
-
                 current->C[i]->key_value->insert(pair<char, int>(password, i));
 
                 map<char, int>::iterator itrx;
@@ -117,30 +155,10 @@ int main()
                     s.push(current->C[i]);*/
                 s.push(current->C[i]);
                 //cout << "Pushed" << endl;
-                //counter++;
             }
         }
     }
 
-    /*for (int i = 0; i < 10; i++)
-    {
-        s.push(t1.getRoot()->C[i]);
-    }
-
-    while (s.empty())
-    {
-        Node *a = s.top();
-        s.pop();
-        for (int i = 0; i < 10; i++)
-        {
-            Node *x = new Node;
-            map<char, int> *m1 = new map<char, int>;
-            a->C[i] = x;
-            a->key_value = *m1;
-            s.push(x->C[i]);
-        }
-
-    }*/
     auto time2 = chrono::high_resolution_clock::now();
     chrono::duration<double, milli> duration = time2 - time1;
 
