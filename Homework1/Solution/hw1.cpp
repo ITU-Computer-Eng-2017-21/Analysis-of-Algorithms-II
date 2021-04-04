@@ -5,31 +5,21 @@
 #include <string>
 #include <chrono>
 #include <cmath>
+#include <set>
+
+#define DIGIT 10
 
 using namespace std;
 
-void test(string s1, string s2, string s3)
+bool test(string puzzle, string s1, string s2, string s3, map<char, int> a)
 {
-    map<char, int> a;
-    a.insert(pair<char, int>('T', 7));
-    a.insert(pair<char, int>('W', 3));
-    a.insert(pair<char, int>('O', 9));
-    a.insert(pair<char, int>('F', 1));
-    a.insert(pair<char, int>('U', 6));
-    a.insert(pair<char, int>('R', 8));
-
-    cout << a['T'] << endl;
-    cout << a['W'] << endl;
-    cout << a['O'] << endl;
-    cout << a['F'] << endl;
-    cout << a['U'] << endl;
-    cout << a['R'] << endl;
-
     int number1 = 0;
+    set<int, greater<int>> set1;
 
     for (int i = 0; i < s1.length(); i++)
     {
         int digit = a[s1[i]];
+        set1.insert(digit);
         int ust = (s1.length() - (i + 1));
         int temp = digit * pow(10, ust);
         number1 = number1 + temp;
@@ -40,6 +30,7 @@ void test(string s1, string s2, string s3)
     for (int i = 0; i < s2.length(); i++)
     {
         int digit = a[s2[i]];
+        set1.insert(digit);
         int ust = (s2.length() - (i + 1));
         int temp = digit * pow(10, ust);
         number2 = number2 + temp;
@@ -50,16 +41,35 @@ void test(string s1, string s2, string s3)
     for (int i = 0; i < s3.length(); i++)
     {
         int digit = a[s3[i]];
+        set1.insert(digit);
         int ust = (s3.length() - (i + 1));
         int temp = digit * pow(10, ust);
         number3 = number3 + temp;
     }
     //cout << number3 << endl;
 
-    if (number1 + number2 == number3)
-        cout << "SUCCESFUL" << endl;
+    if (number1 + number2 == number3 && a[s1[0]] != 0 && a[s2[0]] && a[s3[0]] && set1.size() >= puzzle.length())
+    {
+        cout << "Solution: ";
+        for (int i = 0; i < puzzle.length(); i++)
+        {
+            cout << puzzle[i] << ":" << a[puzzle[i]] << ", ";
+        }
+        cout << endl;
+
+        /*map<char, int>::iterator itrx;
+        for (itrx = a.begin(); itrx != a.end(); ++itrx)
+        {
+            //cout << current->C[i]->a << endl;
+
+            cout << '\t' << itrx->first << '\t' << itrx->second << '\n';
+        }
+        cout << endl;*/
+        return true;
+    }
+
     else
-        cout << "FAIL" << endl;
+        return false;
 }
 class Node
 {
@@ -68,9 +78,15 @@ public:
     map<char, int> *key_value;
     int a;
     char c;
-    Node *C[10];
+    Node *C[DIGIT];
     //vector<Node *> next;
-    Node(){};
+    Node()
+    {
+        for (int i = 0; i < DIGIT; i++)
+        {
+            C[i] = NULL;
+        }
+    };
     ~Node(){};
 };
 
@@ -83,9 +99,6 @@ public:
     ~Tree(){};
 
     Node *getRoot() { return root; };
-    void insert(Node &a)
-    {
-    }
 };
 
 int main()
@@ -98,11 +111,12 @@ int main()
 
     stack<Node *> s;
 
-    string puzzle = "TWOFUR"; // set'e çevirilebilir.
-    //string puzzle = "SENDMORY";
+    //string puzzle = "TWOFUR"; // set'e çevirilebilir.
+    string puzzle = "TWOFUR";
 
     Node *emptynode = new Node;
     emptynode->key_value = new map<char, int>;
+    emptynode->a = DIGIT + 1;
     emptynode->c = '-';
 
     if (!t1.getRoot())
@@ -112,56 +126,80 @@ int main()
 
     s.push(emptynode);
 
-    auto time1 = chrono::high_resolution_clock::now();
     while (!s.empty())
     {
 
         Node *current = s.top();
         s.pop();
         //cout << "Popped" << endl;
-        for (int i = 0; i < 10; i++)
+        int index = puzzle.find(current->c) + 1;
+        if (index < puzzle.length())
         {
-            int index = puzzle.find(current->c) + 1;
-            if (index < puzzle.length())
+            char password = puzzle[index];
+
+            for (int i = 0; i < DIGIT; i++)
             {
-                char password = puzzle[index];
-                current->C[i] = new Node;
-                current->C[i]->key_value = new map<char, int>;
-
-                map<char, int>::iterator itr;
-                //cout << "\nThe map gquiz1 is : \n";
-                //cout << "\tKEY\tELEMENT\n";
-                for (itr = current->key_value->begin(); itr != current->key_value->end(); ++itr)
+                if (i != current->a)
                 {
-                    current->C[i]->key_value->insert(pair<char, int>(itr->first, itr->second));
-                }
-                //cout << endl;
+                    current->C[i] = new Node;
+                    current->C[i]->key_value = new map<char, int>;
 
-                current->C[i]->a = i;
-                current->C[i]->c = password;
-                current->C[i]->key_value->insert(pair<char, int>(password, i));
+                    map<char, int>::iterator itr;
+                    //cout << "\nThe map gquiz1 is : \n";
+                    //cout << "\tKEY\tELEMENT\n";
+                    for (itr = current->key_value->begin(); itr != current->key_value->end(); ++itr)
+                    {
+                        current->C[i]->key_value->insert(pair<char, int>(itr->first, itr->second));
+                    }
+                    //cout << endl;
 
-                map<char, int>::iterator itrx;
-                //cout << "\nThe map " << current->C[i]->c << current->C[i]->a << " is : \n";
-                //cout << "\tKEY\tELEMENT\n";
-                /*for (itrx = current->C[i]->key_value->begin(); itrx != current->C[i]->key_value->end(); ++itrx)
-                {
+                    current->C[i]->a = i;
+                    current->C[i]->c = password;
+                    current->C[i]->key_value->insert(pair<char, int>(password, i));
+
+                    map<char, int>::iterator itrx;
+                    //cout << "\nThe map " << current->C[i]->c << current->C[i]->a << " is : \n";
+                    //cout << "\tKEY\tELEMENT\n";
+                    /*for (itrx = current->C[i]->key_value->begin(); itrx != current->C[i]->key_value->end(); ++itrx)
+                    {
                     //cout << current->C[i]->a << endl;
 
                     cout << '\t' << itrx->first << '\t' << itrx->second << '\n';
+                    }
+                    cout << endl;*/
+
+                    if (password != puzzle[puzzle.length() - 1])
+                        s.push(current->C[i]);
                 }
-                cout << endl;*/
-                /*if (counter < 13)
-                    s.push(current->C[i]);*/
-                s.push(current->C[i]);
+
+                //s.push(current->C[i]);
                 //cout << "Pushed" << endl;
+            }
+        }
+    }
+    int counter = 0;
+    auto time1 = chrono::high_resolution_clock::now();
+    stack<Node *> cop;
+    cop.push(t1.getRoot());
+    bool buldu = false;
+    while (!cop.empty() && !buldu)
+    {
+        Node *current = cop.top();
+        cop.pop();
+        buldu = test(puzzle, s1, s2, s3, *current->key_value);
+        counter++;
+        for (int i = 0; i < DIGIT; i++)
+        {
+            if (current->C[-(i - (DIGIT - 1))])
+            {
+                cop.push((current)->C[-(i - (DIGIT - 1))]);
             }
         }
     }
 
     auto time2 = chrono::high_resolution_clock::now();
     chrono::duration<double, milli> duration = time2 - time1;
-
+    cout << "Counter:" << counter << endl;
     cout << "Total running time is: " << duration.count() << " milliseconds." << endl;
     cout << "END" << endl;
 }
