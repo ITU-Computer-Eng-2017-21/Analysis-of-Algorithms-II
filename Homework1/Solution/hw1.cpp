@@ -15,12 +15,12 @@ using namespace std;
 bool test(string puzzle, string s1, string s2, string s3, map<char, int> a)
 {
     int number1 = 0;
-    set<int, greater<int>> set1;
+    //set<int, greater<int>> set1;
 
     for (int i = 0; i < s1.length(); i++)
     {
         int digit = a[s1[i]];
-        set1.insert(digit);
+        //set1.insert(digit);
         int ust = (s1.length() - (i + 1));
         int temp = digit * pow(10, ust);
         number1 = number1 + temp;
@@ -31,7 +31,7 @@ bool test(string puzzle, string s1, string s2, string s3, map<char, int> a)
     for (int i = 0; i < s2.length(); i++)
     {
         int digit = a[s2[i]];
-        set1.insert(digit);
+        //set1.insert(digit);
         int ust = (s2.length() - (i + 1));
         int temp = digit * pow(10, ust);
         number2 = number2 + temp;
@@ -42,14 +42,14 @@ bool test(string puzzle, string s1, string s2, string s3, map<char, int> a)
     for (int i = 0; i < s3.length(); i++)
     {
         int digit = a[s3[i]];
-        set1.insert(digit);
+        //set1.insert(digit);
         int ust = (s3.length() - (i + 1));
         int temp = digit * pow(10, ust);
         number3 = number3 + temp;
     }
     //cout << number3 << endl;
 
-    if (number1 + number2 == number3 && a[s1[0]] != 0 && a[s2[0]] && a[s3[0]] && set1.size() >= puzzle.length())
+    if (number1 + number2 == number3 && a[s1[0]] != 0 && a[s2[0]] && a[s3[0]])
     {
         cout << "Solution: ";
         for (int i = 0; i < puzzle.length(); i++)
@@ -146,21 +146,38 @@ void Tree::BreathFirstSearch(Node *root, string puzzle, string s1, string s2, st
 
 int main(int argc, char **argv)
 {
-    string type = argv[1];
+
+    //string type = "DFS";
+    string type = "BFS";
+
+    string s1 = "TWO"; // argv ile okuma
+    string s2 = "TWO";
+    string s3 = "FOUR";
+
+    //string s1 = "DOWN"; // argv ile okuma
+    //string s2 = "WWW";
+    //string s3 = "ERROR";
+
+    //string s1 = "SEND"; // argv ile okuma
+    //string s2 = "MORE";
+    //string s3 = "MONEY";
+
+    //string type = argv[1];
+
     string xp = "";
 
-    string s1 = argv[2];
+    //string s1 = argv[2];
     set<char> pset;
     for (int i = 0; i < s1.length(); i++)
     {
         pset.insert(s1[i]);
     }
-    string s2 = argv[3];
+    //string s2 = argv[3];
     for (int i = 0; i < s2.length(); i++)
     {
         pset.insert(s2[i]);
     }
-    string s3 = argv[4];
+    //string s3 = argv[4];
     for (int i = 0; i < s3.length(); i++)
 
     {
@@ -177,22 +194,14 @@ int main(int argc, char **argv)
     //xp.push_back(*pset.end());
     //xp.push_back(*itr);
 
-    cout
-        << type << "\t" << s1 << "\t" << s2 << "\t" << s3 << endl;
-    cout << xp << endl;
-    string puzzle = xp;
+    //cout << type << "\t" << s1 << "\t" << s2 << "\t" << s3 << endl;
+    //cout << xp << endl;
+    cout << "Algorithm: " << type << endl;
+    //string puzzle = xp;
 
-    //string s1 = "TWO"; // argv ile okuma
-    //string s2 = "TWO";
-    //string s3 = "FOUR";
-
-    //string s1 = "DOWN"; // argv ile okuma
-    //string s2 = "WWW";
-    //string s3 = "ERROR";
-
-    //string s1 = "SEND"; // argv ile okuma
-    //string s2 = "MORE";
-    //string s3 = "MONEY";
+    string puzzle = "TWOFUR"; // set'e çevirilebilir.
+    //string puzzle = "DOWNER";
+    //string puzzle = "SENDMORY";
 
     Tree t1;
 
@@ -234,7 +243,7 @@ int main(int argc, char **argv)
                         matching = true;
                     }
 
-                if (i != current->a && !matching)
+                if (!matching)
                 {
 
                     current->C[i] = new Node;
@@ -281,8 +290,10 @@ int main(int argc, char **argv)
         t1.DepthFirstSearch(t1.getRoot(), puzzle, s1, s2, s3);
         auto dfstime2 = chrono::high_resolution_clock::now();
 
-        chrono::duration<double, milli> dfsduration = dfstime2 - dfstime1;
-        cout << "DFS Total running time is: " << dfsduration.count() << " milliseconds." << endl;
+        chrono::duration<double> dfsduration = dfstime2 - dfstime1;
+        cout << "Running time: " << dfsduration.count() << " seconds" << endl;
+        cout << "Number of the visited nodes: " << endl;
+        cout << "Maximum number of nodes kept in the memory: " << endl;
     }
     if (type == "BFS")
     {
@@ -290,9 +301,10 @@ int main(int argc, char **argv)
         t1.BreathFirstSearch(t1.getRoot(), puzzle, s1, s2, s3);
         auto bfstime2 = chrono::high_resolution_clock::now();
 
-        chrono::duration<double, milli> bfsduration = bfstime2 - bfstime1;
-        cout << "BFS Total running time is: " << bfsduration.count() << " milliseconds." << endl;
+        chrono::duration<double> bfsduration = bfstime2 - bfstime1;
+        cout << "Running time: " << bfsduration.count() << " seconds" << endl;
+        cout << "Number of the visited nodes: " << endl;
+        cout << "Maximum number of nodes kept in the memory: " << endl;
     }
-    cout << "Counter:" << counter << endl;
-    cout << "END" << endl;
+    return 0;
 }
