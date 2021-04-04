@@ -144,8 +144,44 @@ void Tree::BreathFirstSearch(Node *root, string puzzle, string s1, string s2, st
     }
 }
 
-int main()
+int main(int argc, char **argv)
 {
+    string type = argv[1];
+    string xp = "";
+
+    string s1 = argv[2];
+    set<char> pset;
+    for (int i = 0; i < s1.length(); i++)
+    {
+        pset.insert(s1[i]);
+    }
+    string s2 = argv[3];
+    for (int i = 0; i < s2.length(); i++)
+    {
+        pset.insert(s2[i]);
+    }
+    string s3 = argv[4];
+    for (int i = 0; i < s3.length(); i++)
+
+    {
+        pset.insert(s3[i]);
+    }
+    set<char, greater<int>>::iterator itr;
+    //cout << "\nThe set s1 is : \n";
+    for (itr = pset.begin(); itr != pset.end(); itr++)
+    {
+        //cout << *itr;
+        xp += *itr;
+        //xp.push_back(*itr);
+    }
+    //xp.push_back(*pset.end());
+    //xp.push_back(*itr);
+
+    cout
+        << type << "\t" << s1 << "\t" << s2 << "\t" << s3 << endl;
+    cout << xp << endl;
+    string puzzle = xp;
+
     //string s1 = "TWO"; // argv ile okuma
     //string s2 = "TWO";
     //string s3 = "FOUR";
@@ -154,9 +190,9 @@ int main()
     //string s2 = "WWW";
     //string s3 = "ERROR";
 
-    string s1 = "SEND"; // argv ile okuma
-    string s2 = "MORE";
-    string s3 = "MONEY";
+    //string s1 = "SEND"; // argv ile okuma
+    //string s2 = "MORE";
+    //string s3 = "MONEY";
 
     Tree t1;
 
@@ -164,7 +200,7 @@ int main()
 
     //string puzzle = "TWOFUR"; // set'e çevirilebilir.
     //string puzzle = "DOWNER";
-    string puzzle = "SENDMORY";
+    //string puzzle = "SENDMORY";
 
     Node *emptynode = new Node;
     emptynode->key_value = new map<char, int>;
@@ -239,14 +275,24 @@ int main()
         }
     }
     int counter = 0;
-    auto time1 = chrono::high_resolution_clock::now();
+    if (type == "DFS")
+    {
+        auto dfstime1 = chrono::high_resolution_clock::now();
+        t1.DepthFirstSearch(t1.getRoot(), puzzle, s1, s2, s3);
+        auto dfstime2 = chrono::high_resolution_clock::now();
 
-    t1.DepthFirstSearch(t1.getRoot(), puzzle, s1, s2, s3);
-    t1.BreathFirstSearch(t1.getRoot(), puzzle, s1, s2, s3);
+        chrono::duration<double, milli> dfsduration = dfstime2 - dfstime1;
+        cout << "DFS Total running time is: " << dfsduration.count() << " milliseconds." << endl;
+    }
+    if (type == "BFS")
+    {
+        auto bfstime1 = chrono::high_resolution_clock::now();
+        t1.BreathFirstSearch(t1.getRoot(), puzzle, s1, s2, s3);
+        auto bfstime2 = chrono::high_resolution_clock::now();
 
-    auto time2 = chrono::high_resolution_clock::now();
-    chrono::duration<double, milli> duration = time2 - time1;
+        chrono::duration<double, milli> bfsduration = bfstime2 - bfstime1;
+        cout << "BFS Total running time is: " << bfsduration.count() << " milliseconds." << endl;
+    }
     cout << "Counter:" << counter << endl;
-    cout << "Total running time is: " << duration.count() << " milliseconds." << endl;
     cout << "END" << endl;
 }
