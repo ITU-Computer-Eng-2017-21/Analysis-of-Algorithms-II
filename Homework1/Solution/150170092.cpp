@@ -18,11 +18,13 @@
 #include <set>
 #include <queue>
 
+#include <fstream>
+
 #define DIGIT 10
 
 using namespace std;
 
-bool test(string puzzle, string s1, string s2, string s3, map<char, int> a)
+bool test(string puzzle, string s1, string s2, string s3, map<char, int> a, string outputFileName)
 {
     int number1 = 0;
     set<int, greater<int>> set1;
@@ -65,6 +67,28 @@ bool test(string puzzle, string s1, string s2, string s3, map<char, int> a)
         }
         cout << endl;
 
+        ofstream myfile;
+        myfile.open(outputFileName + ".txt");
+
+        myfile << "	0	1	2	3	4	5	6	7	8	9\n";
+        for (int i = 0; i < a.size(); i++)
+        {
+            myfile << puzzle[i];
+            for (int j = 0; j < 9; j++)
+            {
+                if (a[puzzle[i]] == j)
+                {
+                    myfile << "	" << 1;
+                }
+                myfile << "	.";
+            }
+            if (a[puzzle[i]] == 9)
+            {
+                myfile << "	" << 1;
+            }
+            myfile << "\n";
+        }
+        myfile.close();
         return true;
     }
 
@@ -98,32 +122,43 @@ public:
     ~Tree(){};
 
     Node *getRoot() { return root; };
-    void DepthFirstSearch(Node *, string, string, string, string);
-    void BreathFirstSearch(Node *, string, string, string, string);
+    void DepthFirstSearch(Node *, string, string, string, string, string);
+    void BreathFirstSearch(Node *, string, string, string, string, string);
 };
 
-void Tree::DepthFirstSearch(Node *root, string puzzle, string s1, string s2, string s3)
+void Tree::DepthFirstSearch(Node *root, string puzzle, string s1, string s2, string s3, string outputFileName)
 {
+    int counterMaxMemory = 0, counterVisited = 0;
     stack<Node *> cop;
     cop.push(root);
     bool buldu = false;
+
     while (!cop.empty() && !buldu)
     {
+
         Node *current = cop.top();
         cop.pop();
-        buldu = test(puzzle, s1, s2, s3, *current->key_value);
+
+        buldu = test(puzzle, s1, s2, s3, *current->key_value, outputFileName);
+
+        counterMaxMemory++;
         for (int i = 0; i < DIGIT; i++)
         {
+
             if (current->C[-(i - (DIGIT - 1))])
             {
+                counterVisited++;
                 cop.push((current)->C[-(i - (DIGIT - 1))]);
             }
         }
     }
+    cout << "Number of the visited nodes1: " << counterVisited << endl;
+    cout << "Maximum number of nodes kept in the memory2: " << counterMaxMemory << endl;
 }
 
-void Tree::BreathFirstSearch(Node *root, string puzzle, string s1, string s2, string s3)
+void Tree::BreathFirstSearch(Node *root, string puzzle, string s1, string s2, string s3, string outputFileName)
 {
+    int counterMaxMemory = 0, counterVisited = 0;
     queue<Node *> cop;
     cop.push(root);
     bool buldu = false;
@@ -131,15 +166,20 @@ void Tree::BreathFirstSearch(Node *root, string puzzle, string s1, string s2, st
     {
         Node *current = cop.front();
         cop.pop();
-        buldu = test(puzzle, s1, s2, s3, *current->key_value);
+
+        buldu = test(puzzle, s1, s2, s3, *current->key_value, outputFileName);
+        counterMaxMemory++;
         for (int i = 0; i < DIGIT; i++)
         {
             if (current->C[-(i - (DIGIT - 1))])
             {
+                counterVisited++;
                 cop.push((current)->C[-(i - (DIGIT - 1))]);
             }
         }
     }
+    cout << "Number of the visited nodes: " << counterVisited << endl;
+    cout << "Maximum number of nodes kept in the memory: " << counterMaxMemory << endl;
 }
 
 int main(int argc, char **argv)
@@ -164,6 +204,9 @@ int main(int argc, char **argv)
     {
         pset.insert(s3[i]);
     }
+
+    string outputFileName = argv[5];
+
     set<char, greater<int>>::iterator itr;
     //cout << "\nThe set s1 is : \n";
     for (itr = pset.begin(); itr != pset.end(); itr++)
@@ -234,24 +277,20 @@ int main(int argc, char **argv)
     if (type == "DFS")
     {
         auto dfstime1 = chrono::high_resolution_clock::now();
-        t1.DepthFirstSearch(t1.getRoot(), puzzle, s1, s2, s3);
+        t1.DepthFirstSearch(t1.getRoot(), puzzle, s1, s2, s3, outputFileName);
         auto dfstime2 = chrono::high_resolution_clock::now();
 
         chrono::duration<double> dfsduration = dfstime2 - dfstime1;
         cout << "Running time: " << dfsduration.count() << " seconds" << endl;
-        cout << "Number of the visited nodes: " << endl;
-        cout << "Maximum number of nodes kept in the memory: " << endl;
     }
     if (type == "BFS")
     {
         auto bfstime1 = chrono::high_resolution_clock::now();
-        t1.BreathFirstSearch(t1.getRoot(), puzzle, s1, s2, s3);
+        t1.BreathFirstSearch(t1.getRoot(), puzzle, s1, s2, s3, outputFileName);
         auto bfstime2 = chrono::high_resolution_clock::now();
 
         chrono::duration<double> bfsduration = bfstime2 - bfstime1;
         cout << "Running time: " << bfsduration.count() << " seconds" << endl;
-        cout << "Number of the visited nodes: " << endl;
-        cout << "Maximum number of nodes kept in the memory: " << endl;
     }
     return 0;
 }
