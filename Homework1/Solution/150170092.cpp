@@ -6,7 +6,7 @@
     Compile:
     g++ -std=c++11 150170092.cpp -o 150170092
     Run:
-    ./150170092 DFS TWO TWO FOUR
+    ./150170092 DFS TWO TWO FOUR outputFileName
 */
 
 #include <iostream>
@@ -128,53 +128,67 @@ public:
 
 void Tree::DepthFirstSearch(Node *root, string puzzle, string s1, string s2, string s3, string outputFileName)
 {
-    int counterMaxMemory = 0, counterVisited = 0;
-    stack<Node *> cop;
-    cop.push(root);
+    int counterMaxMemory = 0;
+    int counterVisited = 0;
+    int temp = 0;
+
+    stack<Node *> memoryStack;
+    memoryStack.push(root);
     bool buldu = false;
 
-    while (!cop.empty() && !buldu)
+    while (!memoryStack.empty() && !buldu)
     {
+        int temp = memoryStack.size();
+        if (temp > counterMaxMemory)
+        {
+            counterMaxMemory = temp;
+        }
 
-        Node *current = cop.top();
-        cop.pop();
+        Node *current = memoryStack.top();
+        memoryStack.pop();
 
         buldu = test(puzzle, s1, s2, s3, *current->key_value, outputFileName);
-
-        counterMaxMemory++;
+        counterVisited++;
         for (int i = 0; i < DIGIT; i++)
         {
 
             if (current->C[-(i - (DIGIT - 1))])
             {
-                counterVisited++;
-                cop.push((current)->C[-(i - (DIGIT - 1))]);
+                memoryStack.push((current)->C[-(i - (DIGIT - 1))]);
             }
         }
     }
-    cout << "Number of the visited nodes1: " << counterVisited << endl;
-    cout << "Maximum number of nodes kept in the memory2: " << counterMaxMemory << endl;
+    cout << "Number of the visited nodes: " << counterVisited << endl;
+    cout << "Maximum number of nodes kept in the memory: " << counterMaxMemory << endl;
 }
 
 void Tree::BreathFirstSearch(Node *root, string puzzle, string s1, string s2, string s3, string outputFileName)
 {
-    int counterMaxMemory = 0, counterVisited = 0;
-    queue<Node *> cop;
-    cop.push(root);
+    int counterMaxMemory = 0;
+    int counterVisited = 0;
+    int temp = 0;
+
+    queue<Node *> memoryQueue;
+    memoryQueue.push(root);
     bool buldu = false;
-    while (!cop.empty() && !buldu)
+    while (!memoryQueue.empty() && !buldu)
     {
-        Node *current = cop.front();
-        cop.pop();
+        int temp = memoryQueue.size();
+        if (temp > counterMaxMemory)
+        {
+            counterMaxMemory = temp;
+        }
+
+        Node *current = memoryQueue.front();
+        memoryQueue.pop();
 
         buldu = test(puzzle, s1, s2, s3, *current->key_value, outputFileName);
-        counterMaxMemory++;
+        counterVisited++;
         for (int i = 0; i < DIGIT; i++)
         {
             if (current->C[-(i - (DIGIT - 1))])
             {
-                counterVisited++;
-                cop.push((current)->C[-(i - (DIGIT - 1))]);
+                memoryQueue.push((current)->C[-(i - (DIGIT - 1))]);
             }
         }
     }
@@ -273,7 +287,7 @@ int main(int argc, char **argv)
             }
         }
     }
-    int counter = 0;
+
     if (type == "DFS")
     {
         auto dfstime1 = chrono::high_resolution_clock::now();
