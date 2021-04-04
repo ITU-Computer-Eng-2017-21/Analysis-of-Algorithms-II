@@ -6,6 +6,7 @@
 #include <chrono>
 #include <cmath>
 #include <set>
+#include <queue>
 
 #define DIGIT 10
 
@@ -99,20 +100,71 @@ public:
     ~Tree(){};
 
     Node *getRoot() { return root; };
+    void DepthFirstSearch(Node *, string, string, string, string);
+    void BreathFirstSearch(Node *, string, string, string, string);
 };
+
+void Tree::DepthFirstSearch(Node *root, string puzzle, string s1, string s2, string s3)
+{
+    stack<Node *> cop;
+    cop.push(root);
+    bool buldu = false;
+    while (!cop.empty() && !buldu)
+    {
+        Node *current = cop.top();
+        cop.pop();
+        buldu = test(puzzle, s1, s2, s3, *current->key_value);
+        for (int i = 0; i < DIGIT; i++)
+        {
+            if (current->C[-(i - (DIGIT - 1))])
+            {
+                cop.push((current)->C[-(i - (DIGIT - 1))]);
+            }
+        }
+    }
+}
+
+void Tree::BreathFirstSearch(Node *root, string puzzle, string s1, string s2, string s3)
+{
+    queue<Node *> cop;
+    cop.push(root);
+    bool buldu = false;
+    while (!cop.empty() && !buldu)
+    {
+        Node *current = cop.front();
+        cop.pop();
+        buldu = test(puzzle, s1, s2, s3, *current->key_value);
+        for (int i = 0; i < DIGIT; i++)
+        {
+            if (current->C[-(i - (DIGIT - 1))])
+            {
+                cop.push((current)->C[-(i - (DIGIT - 1))]);
+            }
+        }
+    }
+}
 
 int main()
 {
-    string s1 = "TWO"; // argv ile okuma
-    string s2 = "TWO";
-    string s3 = "FOUR";
+    //string s1 = "TWO"; // argv ile okuma
+    //string s2 = "TWO";
+    //string s3 = "FOUR";
+
+    //string s1 = "DOWN"; // argv ile okuma
+    //string s2 = "WWW";
+    //string s3 = "ERROR";
+
+    string s1 = "SEND"; // argv ile okuma
+    string s2 = "MORE";
+    string s3 = "MONEY";
 
     Tree t1;
 
     stack<Node *> s;
 
     //string puzzle = "TWOFUR"; // set'e çevirilebilir.
-    string puzzle = "TWOFUR";
+    //string puzzle = "DOWNER";
+    string puzzle = "SENDMORY";
 
     Node *emptynode = new Node;
     emptynode->key_value = new map<char, int>;
@@ -139,8 +191,16 @@ int main()
 
             for (int i = 0; i < DIGIT; i++)
             {
-                if (i != current->a)
+                bool matching = false;
+                for (auto it = current->key_value->begin(); it != current->key_value->end(); ++it)
+                    if (it->second == i)
+                    {
+                        matching = true;
+                    }
+
+                if (i != current->a && !matching)
                 {
+
                     current->C[i] = new Node;
                     current->C[i]->key_value = new map<char, int>;
 
@@ -151,6 +211,7 @@ int main()
                     {
                         current->C[i]->key_value->insert(pair<char, int>(itr->first, itr->second));
                     }
+
                     //cout << endl;
 
                     current->C[i]->a = i;
@@ -168,7 +229,7 @@ int main()
                     }
                     cout << endl;*/
 
-                    if (password != puzzle[puzzle.length() - 1])
+                    if (password != puzzle[puzzle.length() - 1] && !matching)
                         s.push(current->C[i]);
                 }
 
@@ -179,23 +240,9 @@ int main()
     }
     int counter = 0;
     auto time1 = chrono::high_resolution_clock::now();
-    stack<Node *> cop;
-    cop.push(t1.getRoot());
-    bool buldu = false;
-    while (!cop.empty() && !buldu)
-    {
-        Node *current = cop.top();
-        cop.pop();
-        buldu = test(puzzle, s1, s2, s3, *current->key_value);
-        counter++;
-        for (int i = 0; i < DIGIT; i++)
-        {
-            if (current->C[-(i - (DIGIT - 1))])
-            {
-                cop.push((current)->C[-(i - (DIGIT - 1))]);
-            }
-        }
-    }
+
+    t1.DepthFirstSearch(t1.getRoot(), puzzle, s1, s2, s3);
+    t1.BreathFirstSearch(t1.getRoot(), puzzle, s1, s2, s3);
 
     auto time2 = chrono::high_resolution_clock::now();
     chrono::duration<double, milli> duration = time2 - time1;
