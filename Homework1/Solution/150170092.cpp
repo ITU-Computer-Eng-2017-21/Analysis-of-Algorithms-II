@@ -128,9 +128,9 @@ public:
 
 void Tree::DepthFirstSearch(Node *root, string puzzle, string s1, string s2, string s3, string outputFileName)
 {
-    int counterMaxMemory = 0;
+    //int counterMaxMemory = 0;
     int counterVisited = 0;
-    int temp = 0;
+    //int temp = 0;
 
     stack<Node *> memoryStack;
     memoryStack.push(root);
@@ -139,10 +139,10 @@ void Tree::DepthFirstSearch(Node *root, string puzzle, string s1, string s2, str
     while (!memoryStack.empty() && !buldu)
     {
         int temp = memoryStack.size();
-        if (temp > counterMaxMemory)
+        /*if (temp > counterMaxMemory)
         {
             counterMaxMemory = temp;
-        }
+        }*/
 
         Node *current = memoryStack.top();
         memoryStack.pop();
@@ -159,25 +159,25 @@ void Tree::DepthFirstSearch(Node *root, string puzzle, string s1, string s2, str
         }
     }
     cout << "Number of the visited nodes: " << counterVisited << endl;
-    cout << "Maximum number of nodes kept in the memory: " << counterMaxMemory << endl;
+    //cout << "Maximum number of nodes kept in the memory: " << counterMaxMemory << endl;
 }
 
 void Tree::BreathFirstSearch(Node *root, string puzzle, string s1, string s2, string s3, string outputFileName)
 {
-    int counterMaxMemory = 0;
+    //int counterMaxMemory = 0;
     int counterVisited = 0;
-    int temp = 0;
+    //int temp = 0;
 
     queue<Node *> memoryQueue;
     memoryQueue.push(root);
     bool buldu = false;
     while (!memoryQueue.empty() && !buldu)
     {
-        int temp = memoryQueue.size();
+        /*int temp = memoryQueue.size();
         if (temp > counterMaxMemory)
         {
             counterMaxMemory = temp;
-        }
+        }*/
 
         Node *current = memoryQueue.front();
         memoryQueue.pop();
@@ -186,14 +186,18 @@ void Tree::BreathFirstSearch(Node *root, string puzzle, string s1, string s2, st
         counterVisited++;
         for (int i = 0; i < DIGIT; i++)
         {
-            if (current->C[-(i - (DIGIT - 1))])
+            /*if (current->C[-(i - (DIGIT - 1))])
             {
                 memoryQueue.push((current)->C[-(i - (DIGIT - 1))]);
+            }*/
+            if (current->C[i])
+            {
+                memoryQueue.push((current)->C[i]);
             }
         }
     }
     cout << "Number of the visited nodes: " << counterVisited << endl;
-    cout << "Maximum number of nodes kept in the memory: " << counterMaxMemory << endl;
+    //cout << "Maximum number of nodes kept in the memory: " << counterMaxMemory << endl;
 }
 
 int main(int argc, char **argv)
@@ -242,7 +246,7 @@ int main(int argc, char **argv)
     {
         t1.root = emptynode;
     }
-
+    int counterMaxMemory = 1;
     s.push(emptynode);
 
     while (!s.empty())
@@ -276,6 +280,7 @@ int main(int argc, char **argv)
                     {
                         current->C[i]->key_value->insert(pair<char, int>(itr->first, itr->second));
                     }
+                    counterMaxMemory++;
 
                     current->C[i]->a = i;
                     current->C[i]->c = password;
@@ -295,6 +300,7 @@ int main(int argc, char **argv)
         auto dfstime2 = chrono::high_resolution_clock::now();
 
         chrono::duration<double> dfsduration = dfstime2 - dfstime1;
+        cout << "Maximum number of nodes kept in the memory: " << counterMaxMemory << endl;
         cout << "Running time: " << dfsduration.count() << " seconds" << endl;
     }
     if (type == "BFS")
@@ -304,6 +310,7 @@ int main(int argc, char **argv)
         auto bfstime2 = chrono::high_resolution_clock::now();
 
         chrono::duration<double> bfsduration = bfstime2 - bfstime1;
+        cout << "Maximum number of nodes kept in the memory: " << counterMaxMemory << endl;
         cout << "Running time: " << bfsduration.count() << " seconds" << endl;
     }
     return 0;
