@@ -19,7 +19,7 @@
 #include <chrono>
 #include <fstream>
 
-#define DIGIT 10
+#define DIGIT 10 //not a magic number :) represent child number and numbers {0-9}
 
 using namespace std;
 /*map values checking possible solutions in isSolution function*/
@@ -103,10 +103,10 @@ class Node
 {
 private:
 public:
-    map<char, int> *key_value;
-    int a;
-    char c;
-    Node *C[DIGIT];
+    map<char, int> *key_value; // contains solution pairs
+    int a;                     // number for detect child
+    char c;                    // letter for detect layer
+    Node *C[DIGIT];            // children nodes
     Node()
     {
         for (int i = 0; i < DIGIT; i++)
@@ -138,19 +138,19 @@ void Tree::DepthFirstSearch(Node *root, string puzzle, string s1, string s2, str
     memoryStack.push(root);
     bool solved = false;
 
-    while (!memoryStack.empty() && !solved)
+    while (!memoryStack.empty() && !solved) //when solution found or Stack empty stop.
     {
         Node *current = memoryStack.top();
         memoryStack.pop();
 
-        solved = Solution(puzzle, s1, s2, s3, *current->key_value, outputFileName);
+        solved = Solution(puzzle, s1, s2, s3, *current->key_value, outputFileName); //return true at found solution
         counterVisited++;
         for (int i = 0; i < DIGIT; i++)
         {
-
-            if (current->C[-(i - (DIGIT - 1))])
+            //if there is current node's children.
+            if (current->C[-(i - (DIGIT - 1))]) //!! Star 9-->0 because in assignment expect scan tree left to right.
             {
-                memoryStack.push((current)->C[-(i - (DIGIT - 1))]);
+                memoryStack.push((current)->C[-(i - (DIGIT - 1))]); // push child bottom of stack. Because leaf nodes are priority.
             }
         }
     }
@@ -164,18 +164,18 @@ void Tree::BreathFirstSearch(Node *root, string puzzle, string s1, string s2, st
     queue<Node *> memoryQueue;
     memoryQueue.push(root);
     bool solved = false;
-    while (!memoryQueue.empty() && !solved)
+    while (!memoryQueue.empty() && !solved) //when solution found or Queue empty stop.
     {
         Node *current = memoryQueue.front();
         memoryQueue.pop();
 
-        solved = Solution(puzzle, s1, s2, s3, *current->key_value, outputFileName);
+        solved = Solution(puzzle, s1, s2, s3, *current->key_value, outputFileName); //return true at found solution
         counterVisited++;
         for (int i = 0; i < DIGIT; i++)
         {
-            if (current->C[i])
+            if (current->C[i]) //if there is current node's children
             {
-                memoryQueue.push((current)->C[i]);
+                memoryQueue.push((current)->C[i]); // push child back of queue. Because root nodes are priority.
             }
         }
     }
@@ -184,41 +184,41 @@ void Tree::BreathFirstSearch(Node *root, string puzzle, string s1, string s2, st
 
 int main(int argc, char **argv)
 {
-    string type = argv[1];
+    string type = argv[1]; //DFS / BFS
 
-    string s1 = argv[2];
+    string s1 = argv[2]; //TWO
+    set<char> puzzleSet; //Distinct letters from command line.
 
-    set<char> puzzleSet;
     for (int i = 0; i < s1.length(); i++)
     {
         puzzleSet.insert(s1[i]);
     }
 
-    string s2 = argv[3];
+    string s2 = argv[3]; //TWO
     for (int i = 0; i < s2.length(); i++)
     {
         puzzleSet.insert(s2[i]);
     }
 
-    string s3 = argv[4];
+    string s3 = argv[4]; // FOUR
     for (int i = 0; i < s3.length(); i++)
     {
         puzzleSet.insert(s3[i]);
     }
 
-    string outputFileName = argv[5];
+    string outputFileName = argv[5]; // outputFileName
 
     string puzzle = "";
     set<char, greater<int>>::iterator itr;
     for (itr = puzzleSet.begin(); itr != puzzleSet.end(); itr++)
     {
-        puzzle += *itr;
+        puzzle += *itr; // Rebuilding string puzzle from distinct letters
     }
 
     Tree t1;
     stack<Node *> s;
 
-    Node *emptyNode = new Node;
+    Node *emptyNode = new Node; // empty root node
     emptyNode->key_value = new map<char, int>;
     emptyNode->a = DIGIT + 1;
     emptyNode->c = '-';
@@ -227,28 +227,28 @@ int main(int argc, char **argv)
     {
         t1.root = emptyNode;
     }
-    int counterMaxMemory = 1;
+    int counterMaxMemory = 1; // counts tree node number
     s.push(emptyNode);
 
     // Creating tree structure
     while (!s.empty())
     {
-        Node *current = s.top();
+        Node *current = s.top(); // top node on Stack
         s.pop();
 
-        int index = puzzle.find(current->c) + 1;
-        if (index < puzzle.length())
+        int index = puzzle.find(current->c) + 1; // returns index of top Stack's character for detect F"O"RTUW layer.
+        if (index < puzzle.length())             // layer number condition. When all distinct letter represent in one layer
         {
-            char password = puzzle[index];
+            char password = puzzle[index]; // determine child node layer type F"O"RTUW ->> FO"R"TUW
 
-            for (int i = 0; i < DIGIT; i++)
+            for (int i = 0; i < DIGIT; i++) // C[0],C[1],C[2],....,C[8],C[9]
             {
                 bool matching = false;
                 for (auto it = current->key_value->begin(); it != current->key_value->end(); ++it)
-                    if (it->second == i)
+                    if (it->second == i) //check parent map for detect already usen numbers
                     {
-                        matching = true;
-                    }
+                        matching = true; // this function get  smaller tree
+                    }                    // on FORTUW Total Node Number = 10*9*8*7*6*5 + 10*9*8*7*6 + 10*9*8*7 + 10*9*8 + 10*9 + 10 + root
 
                 if (!matching)
                 {
@@ -264,10 +264,10 @@ int main(int argc, char **argv)
 
                     current->C[i]->a = i;
                     current->C[i]->c = password;
-                    current->C[i]->key_value->insert(pair<char, int>(password, i));
+                    current->C[i]->key_value->insert(pair<char, int>(password, i)); //and add new character and number
                     counterMaxMemory++;
 
-                    if (password != puzzle[puzzle.length() - 1])
+                    if (password != puzzle[puzzle.length() - 1]) // push if not character is end of puzzşe FORTU"W"
                         s.push(current->C[i]);
                 }
             }
@@ -278,7 +278,7 @@ int main(int argc, char **argv)
     if (type == "DFS")
     {
         auto dfstime1 = chrono::high_resolution_clock::now();
-        t1.DepthFirstSearch(t1.getRoot(), puzzle, s1, s2, s3, outputFileName);
+        t1.DepthFirstSearch(t1.getRoot(), puzzle, s1, s2, s3, outputFileName); //call DFS
         auto dfstime2 = chrono::high_resolution_clock::now();
 
         chrono::duration<double> dfsduration = dfstime2 - dfstime1;
@@ -288,7 +288,7 @@ int main(int argc, char **argv)
     if (type == "BFS")
     {
         auto bfstime1 = chrono::high_resolution_clock::now();
-        t1.BreathFirstSearch(t1.getRoot(), puzzle, s1, s2, s3, outputFileName);
+        t1.BreathFirstSearch(t1.getRoot(), puzzle, s1, s2, s3, outputFileName); //call BFS
         auto bfstime2 = chrono::high_resolution_clock::now();
 
         chrono::duration<double> bfsduration = bfstime2 - bfstime1;
