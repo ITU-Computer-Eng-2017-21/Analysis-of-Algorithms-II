@@ -4,91 +4,95 @@
     @date :4.02.2021
     ///////////////////////////
     Compile:
-    g++ -std=c++11 150170092.cpp -o 150170092
+    g++ -std=c++11 150170092.cpp -o hw1
     Run:
-    ./150170092 DFS TWO TWO FOUR outputFileName
+    ./hw1 DFS TWO TWO FOUR outputFileName
 */
 
 #include <iostream>
 #include <map>
 #include <stack>
 #include <string>
-#include <chrono>
-#include <cmath>
 #include <set>
 #include <queue>
-
+#include <cmath>
+#include <chrono>
 #include <fstream>
 
 #define DIGIT 10
 
 using namespace std;
-
-bool test(string puzzle, string s1, string s2, string s3, map<char, int> a, string outputFileName)
+/*map values checking possible solutions in isSolution function*/
+bool Solution(string puzzle, string s1, string s2, string s3, map<char, int> a, string outputFileName)
 {
-    int number1 = 0;
-    set<int, greater<int>> set1;
+    set<int, greater<int>> solutionSet; //counting different digits
 
+    int number1 = 0; //calculate first number SEND = 9567
     for (int i = 0; i < s1.length(); i++)
     {
-        int digit = a[s1[i]];
-        set1.insert(digit);
-        int ust = (s1.length() - (i + 1));
-        int temp = digit * pow(10, ust);
+        int base = a[s1[i]];
+        solutionSet.insert(base); // 9, 5, 6, 7
+        int exponent = (s1.length() - (i + 1));
+        int temp = base * pow(10, exponent);
         number1 = number1 + temp;
     }
 
-    int number2 = 0;
+    int number2 = 0; //calculate first number MORE = 1085
     for (int i = 0; i < s2.length(); i++)
     {
-        int digit = a[s2[i]];
-        set1.insert(digit);
-        int ust = (s2.length() - (i + 1));
-        int temp = digit * pow(10, ust);
+        int base = a[s2[i]];
+        solutionSet.insert(base); // 1, 0, 8, 5
+        int exponent = (s2.length() - (i + 1));
+        int temp = base * pow(10, exponent);
         number2 = number2 + temp;
     }
 
-    int number3 = 0;
+    int number3 = 0; //calculate first number MONEY = 10652
     for (int i = 0; i < s3.length(); i++)
     {
-        int digit = a[s3[i]];
-        set1.insert(digit);
-        int ust = (s3.length() - (i + 1));
-        int temp = digit * pow(10, ust);
+        int base = a[s3[i]];
+        solutionSet.insert(base); // 1, 0, 6, 5, 2
+        int exponent = (s3.length() - (i + 1));
+        int temp = base * pow(10, exponent);
         number3 = number3 + temp;
     }
 
-    if (number1 + number2 == number3 && a[s1[0]] != 0 && a[s2[0]] && a[s3[0]] && set1.size() == puzzle.length())
+    //9567 + 1085 =? 10652 //[S]END [M]ORE [M]ONEY SMM cannot be equal 0 //solutionSet = {9,5,6,7,1,0,8,2} has 8 number == SENDMORY length
+    if (number1 + number2 == number3 && a[s1[0]] != 0 && a[s2[0]] && a[s3[0]] && solutionSet.size() == puzzle.length())
     {
-        cout << "Solution: ";
+        cout << "Solution: "; // solution output
         for (int i = 0; i < puzzle.length(); i++)
         {
-            cout << puzzle[i] << ":" << a[puzzle[i]] << ", ";
+            cout << puzzle[i] << ":" << a[puzzle[i]];
+            if (i < puzzle.length() - 1)
+            {
+                cout << ", ";
+            }
         }
         cout << endl;
 
-        ofstream myfile;
-        myfile.open(outputFileName + ".txt");
+        ofstream file; //writing solution to txt file
+        file.open(outputFileName + ".txt");
 
-        myfile << "	0	1	2	3	4	5	6	7	8	9\n";
+        file << "	0	1	2	3	4	5	6	7	8	9\n";
         for (int i = 0; i < a.size(); i++)
         {
-            myfile << puzzle[i];
+            file << puzzle[i];
             for (int j = 0; j < 9; j++)
             {
                 if (a[puzzle[i]] == j)
                 {
-                    myfile << "	" << 1;
+                    file << "	" << 1;
                 }
-                myfile << "	.";
+                file << "	.";
             }
             if (a[puzzle[i]] == 9)
             {
-                myfile << "	" << 1;
+                file << "	" << 1;
             }
-            myfile << "\n";
+            file << "\n";
         }
-        myfile.close();
+        file.close();
         return true;
     }
 
@@ -125,29 +129,21 @@ public:
     void DepthFirstSearch(Node *, string, string, string, string, string);
     void BreathFirstSearch(Node *, string, string, string, string, string);
 };
-
+/*root, SENDMORY, SEND, MORE, MONEY, outputFileName*/
 void Tree::DepthFirstSearch(Node *root, string puzzle, string s1, string s2, string s3, string outputFileName)
 {
-    //int counterMaxMemory = 0;
     int counterVisited = 0;
-    //int temp = 0;
 
     stack<Node *> memoryStack;
     memoryStack.push(root);
-    bool buldu = false;
+    bool solved = false;
 
-    while (!memoryStack.empty() && !buldu)
+    while (!memoryStack.empty() && !solved)
     {
-        int temp = memoryStack.size();
-        /*if (temp > counterMaxMemory)
-        {
-            counterMaxMemory = temp;
-        }*/
-
         Node *current = memoryStack.top();
         memoryStack.pop();
 
-        buldu = test(puzzle, s1, s2, s3, *current->key_value, outputFileName);
+        solved = Solution(puzzle, s1, s2, s3, *current->key_value, outputFileName);
         counterVisited++;
         for (int i = 0; i < DIGIT; i++)
         {
@@ -159,37 +155,24 @@ void Tree::DepthFirstSearch(Node *root, string puzzle, string s1, string s2, str
         }
     }
     cout << "Number of the visited nodes: " << counterVisited << endl;
-    //cout << "Maximum number of nodes kept in the memory: " << counterMaxMemory << endl;
 }
-
+/*root, SENDMORY, SEND, MORE, MONEY, outputFileName*/
 void Tree::BreathFirstSearch(Node *root, string puzzle, string s1, string s2, string s3, string outputFileName)
 {
-    //int counterMaxMemory = 0;
     int counterVisited = 0;
-    //int temp = 0;
 
     queue<Node *> memoryQueue;
     memoryQueue.push(root);
-    bool buldu = false;
-    while (!memoryQueue.empty() && !buldu)
+    bool solved = false;
+    while (!memoryQueue.empty() && !solved)
     {
-        /*int temp = memoryQueue.size();
-        if (temp > counterMaxMemory)
-        {
-            counterMaxMemory = temp;
-        }*/
-
         Node *current = memoryQueue.front();
         memoryQueue.pop();
 
-        buldu = test(puzzle, s1, s2, s3, *current->key_value, outputFileName);
+        solved = Solution(puzzle, s1, s2, s3, *current->key_value, outputFileName);
         counterVisited++;
         for (int i = 0; i < DIGIT; i++)
         {
-            /*if (current->C[-(i - (DIGIT - 1))])
-            {
-                memoryQueue.push((current)->C[-(i - (DIGIT - 1))]);
-            }*/
             if (current->C[i])
             {
                 memoryQueue.push((current)->C[i]);
@@ -197,61 +180,59 @@ void Tree::BreathFirstSearch(Node *root, string puzzle, string s1, string s2, st
         }
     }
     cout << "Number of the visited nodes: " << counterVisited << endl;
-    //cout << "Maximum number of nodes kept in the memory: " << counterMaxMemory << endl;
 }
 
 int main(int argc, char **argv)
 {
     string type = argv[1];
-    string xp = "";
 
     string s1 = argv[2];
-    set<char> pset;
+
+    set<char> puzzleSet;
     for (int i = 0; i < s1.length(); i++)
     {
-        pset.insert(s1[i]);
+        puzzleSet.insert(s1[i]);
     }
+
     string s2 = argv[3];
     for (int i = 0; i < s2.length(); i++)
     {
-        pset.insert(s2[i]);
+        puzzleSet.insert(s2[i]);
     }
+
     string s3 = argv[4];
     for (int i = 0; i < s3.length(); i++)
-
     {
-        pset.insert(s3[i]);
+        puzzleSet.insert(s3[i]);
     }
 
     string outputFileName = argv[5];
 
+    string puzzle = "";
     set<char, greater<int>>::iterator itr;
-    //cout << "\nThe set s1 is : \n";
-    for (itr = pset.begin(); itr != pset.end(); itr++)
+    for (itr = puzzleSet.begin(); itr != puzzleSet.end(); itr++)
     {
-        xp += *itr;
+        puzzle += *itr;
     }
-    string puzzle = xp;
-    cout << "Algorithm: " << type << endl;
 
     Tree t1;
     stack<Node *> s;
 
-    Node *emptynode = new Node;
-    emptynode->key_value = new map<char, int>;
-    emptynode->a = DIGIT + 1;
-    emptynode->c = '-';
+    Node *emptyNode = new Node;
+    emptyNode->key_value = new map<char, int>;
+    emptyNode->a = DIGIT + 1;
+    emptyNode->c = '-';
 
     if (!t1.getRoot())
     {
-        t1.root = emptynode;
+        t1.root = emptyNode;
     }
     int counterMaxMemory = 1;
-    s.push(emptynode);
+    s.push(emptyNode);
 
+    // Creating tree structure
     while (!s.empty())
     {
-
         Node *current = s.top();
         s.pop();
 
@@ -280,11 +261,11 @@ int main(int argc, char **argv)
                     {
                         current->C[i]->key_value->insert(pair<char, int>(itr->first, itr->second));
                     }
-                    counterMaxMemory++;
 
                     current->C[i]->a = i;
                     current->C[i]->c = password;
                     current->C[i]->key_value->insert(pair<char, int>(password, i));
+                    counterMaxMemory++;
 
                     if (password != puzzle[puzzle.length() - 1])
                         s.push(current->C[i]);
@@ -293,6 +274,7 @@ int main(int argc, char **argv)
         }
     }
 
+    cout << "Algorithm: " << type << endl;
     if (type == "DFS")
     {
         auto dfstime1 = chrono::high_resolution_clock::now();
