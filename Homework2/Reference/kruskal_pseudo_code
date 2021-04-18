@@ -1,0 +1,16 @@
+// Initialize result
+mst_weight = 0
+
+// Create V single item sets
+for each vertex v
+	parent[v] = v;
+	rank[v] = 0;
+
+Sort all edges into non decreasing 
+order by weight w
+
+for each (u, v) taken from the sorted list  E
+    do if FIND-SET(u) != FIND-SET(v)
+        print edge(u, v)
+        mst_weight += weight of edge(u, v)
+        UNION(u, v)
