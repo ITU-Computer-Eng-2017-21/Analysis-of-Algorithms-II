@@ -14,7 +14,7 @@ void addEdge(vector<pair<int, int>> adj[], int u, int v, int wt)
 }
 
 // Prints shortest paths from src to all other vertices
-void primMST(vector<pair<int, int>> adj[], int V)
+void primMST(vector<pair<int, int>> adj[], int V, map<int, string> m1)
 {
     // Create a priority queue to store vertices that
     // are being preinMST. This is weird syntax in C++.
@@ -36,8 +36,10 @@ void primMST(vector<pair<int, int>> adj[], int V)
 
     // Insert source itself in priority queue and initialize
     // its key as 0.
-    pq.push(make_pair(0, src));
-    key[src] = 0;
+    pq.push(make_pair(0, 1));
+    //key[src] = 2000;
+    key[1] = 2000;
+    parent[1] = 0;
 
     /* Looping till priority queue becomes empty */
     while (!pq.empty())
@@ -51,6 +53,9 @@ void primMST(vector<pair<int, int>> adj[], int V)
         int u = pq.top().second;
         pq.pop();
 
+        //key[1] = 2000;
+        //parent[1] = 0;
+        //inMST[1] = true;
         inMST[u] = true; // Include vertex in MST
 
         // Traverse all adjacent of u
@@ -75,16 +80,55 @@ void primMST(vector<pair<int, int>> adj[], int V)
 
     // Print edges of MST using parent array
     for (int i = 1; i < V; ++i)
+    {
+        cout << m1[parent[i]] << "," << m1[i] << "," << key[i] << "\n";
+        //cout << m1[i] << "," << m1[parent[i]] << "," << key[i] << "\n";
+        //cout << "------------\n";
         printf("%d - %d\n", parent[i], i);
+    }
 }
 
 // Driver program to test methods of graph class
 int main()
 {
-    int V = 10;
+    int V = 11;
     vector<iPair> adj[V];
 
+    map<int, string> m1;
+
+    m1.insert(pair<int, string>(0, "GP"));
+    m1.insert(pair<int, string>(1, "Hipp"));
+    m1.insert(pair<int, string>(2, "Bas1"));
+    m1.insert(pair<int, string>(3, "Bas2"));
+    m1.insert(pair<int, string>(4, "Bas3"));
+    m1.insert(pair<int, string>(5, "Ch1"));
+    m1.insert(pair<int, string>(6, "Ch2"));
+    m1.insert(pair<int, string>(7, "Hp1"));
+    m1.insert(pair<int, string>(8, "Hp2"));
+    m1.insert(pair<int, string>(9, "Hp3"));
+    m1.insert(pair<int, string>(10, "Hp4"));
+
+    addEdge(adj, 0, 1, 12);
+    addEdge(adj, 0, 6, 2);
+    addEdge(adj, 0, 4, 9);
+    addEdge(adj, 0, 10, 8);
+    addEdge(adj, 0, 3, 6);
+    addEdge(adj, 1, 5, 1);
+    addEdge(adj, 1, 7, 7);
+    //addEdge(adj, 1, 2, 14); //
+    addEdge(adj, 1, 6, 13);
+    addEdge(adj, 1, 8, 10);
+    addEdge(adj, 2, 6, 15);
+    addEdge(adj, 6, 4, 4);
+    addEdge(adj, 4, 10, 16);
+    addEdge(adj, 4, 9, 11);
+    //addEdge(adj, 9, 10, 17);
+    addEdge(adj, 9, 3, 3);
+    addEdge(adj, 3, 8, 18);
+    //addEdge(adj, 10, 8, 5); //
+
     // making above shown graph
+    /*
     addEdge(adj, 0, 1, 4);
     addEdge(adj, 1, 2, 17);
     addEdge(adj, 3, 4, 13);
@@ -106,8 +150,9 @@ int main()
     addEdge(adj, 5, 7, 6);
     addEdge(adj, 6, 9, 11);
     addEdge(adj, 8, 9, 10);
+    */
 
-    primMST(adj, V);
+    primMST(adj, V, m1);
 
     return 0;
 }
