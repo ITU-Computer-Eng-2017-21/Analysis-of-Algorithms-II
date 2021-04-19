@@ -1,5 +1,6 @@
 // STL implementation of Prim's algorithm for MST
 #include <bits/stdc++.h>
+#include <algorithm>
 using namespace std;
 #define INF 0x3f3f3f3f
 
@@ -23,8 +24,58 @@ public:
     void addEdge(string us, string vs, int wt, set<string> s1);
 
     // Print MST using Prim's algorithm
-    map<int, int> primMST(map<int, string> m1);
+    map<string, int> primMST(map<int, string> m1, int point_GP, int point_Hipp, int point_Chx, int weight_GPtoHipp, int weight_GPtoChx);
 };
+
+//function to return position in map
+int positionSet(set<string> s1, string Ch)
+{
+    set<string>::iterator itr;
+    int position = 0;
+    for (itr = s1.begin(); itr != s1.end(); itr++)
+    {
+        //cout << *itr << endl;
+        if (*itr == Ch)
+        {
+            position = distance(s1.begin(), itr);
+        }
+        //m1.insert(pair<int, string>(0, *itr));
+    }
+    return position;
+};
+
+bool cmp(pair<string, int> &a, pair<string, int> &b)
+{
+    return a.second < b.second;
+}
+
+// Function to sort the map according
+// to value in a (key-value) pairs
+void sort(map<string, int> &M)
+{
+    int totalCost = 0;
+    // Declare vector of pairs
+    vector<pair<string, int>> A;
+
+    // Copy key-value pair from Map
+    // to vector of pairs
+    for (auto &it : M)
+    {
+        A.push_back(it);
+    }
+
+    // Sort using comparator function
+    sort(A.begin(), A.end(), cmp);
+
+    // Print the sorted value
+    for (auto &it : A)
+    {
+
+        cout << it.first << ' ' << it.second << endl;
+        totalCost = totalCost + it.second;
+    }
+    cout << totalCost << '\n';
+}
 
 // Allocates memory for adjacency list
 Graph::Graph(int V)
@@ -56,7 +107,7 @@ void Graph::addEdge(string us, string vs, int wt, set<string> s1)
 }
 
 // Prints shortest paths from src to all other vertices
-map<int, int> Graph::primMST(map<int, string> m1)
+map<string, int> Graph::primMST(map<int, string> m1, int point_GP, int point_Hipp, int point_Chx, int weight_GPtoHipp, int weight_GPtoChx)
 {
     // Create a priority queue to store vertices that
     // are being preinMST. This is weird syntax in C++.
@@ -64,8 +115,8 @@ map<int, int> Graph::primMST(map<int, string> m1)
     // http://geeksquiz.com/implement-min-heap-using-stl/
     priority_queue<iPair, vector<iPair>, greater<iPair>> pq;
 
-    int src = 5; // Taking vertex 0 as source
-    map<int, int> mx;
+    int src = point_GP; // Taking vertex 0 as source
+    map<string, int> mx;
 
     // Create a vector for keys and initialize all
     // keys as infinite (INF)
@@ -82,12 +133,12 @@ map<int, int> Graph::primMST(map<int, string> m1)
     pq.push(make_pair(-3, src));
     key[src] = 0;
     parent[src] = src;
-    pq.push(make_pair(-4, 4));
-    key[4] = 2000;
-    parent[4] = src;
-    pq.push(make_pair(-1, 6));
-    key[6] = 1200;
-    parent[6] = src;
+    pq.push(make_pair(-4, point_Hipp));
+    key[point_Hipp] = weight_GPtoHipp;
+    parent[point_Hipp] = src;
+    pq.push(make_pair(-1, point_Chx));
+    key[point_Chx] = weight_GPtoChx;
+    parent[point_Chx] = src;
 
     /* Looping till priority queue becomes empty */
     while (!pq.empty())
@@ -133,6 +184,7 @@ map<int, int> Graph::primMST(map<int, string> m1)
     }
 
     // Print edges of MST using parent array
+
     for (int i = 0; i < V; ++i)
     {
         if (i != src)
@@ -140,7 +192,7 @@ map<int, int> Graph::primMST(map<int, string> m1)
             //cout << m1[parent[i]] << "," << m1[i] << "," << key[i] << "\n";
             //printf("%d - %d\n", parent[i], i);
 
-            mx.insert(pair<int, int>(i, parent[i]));
+            mx.insert(pair<string, int>(m1[parent[i]] + "," + m1[i], key[i]));
         }
     }
     return mx;
@@ -171,10 +223,34 @@ int main()
     g.addEdge(7, 8, 7);
     */
 
-    map<int, string> m1;
-
+    ifstream file1;
+    file1.open("city_plan_1.txt");
     set<string> s1;
 
+    if (!file1)
+    {
+        cerr << "File cannot be opened!";
+        exit(1);
+    }
+
+    string line;
+    string source, destination, cop;
+    //int weight = 0;
+
+    //Okumaya başla!
+    while (!file1.eof())
+    {
+        // "," e kadar oku. String olarak al.
+        getline(file1, source, ',');
+        getline(file1, destination, ',');
+        getline(file1, cop, '\n');
+
+        s1.insert(source);
+        s1.insert(destination);
+    }
+
+    map<int, string> m1;
+    /*
     s1.insert("GP");
     s1.insert("Hipp");
     s1.insert("Bas1");
@@ -186,22 +262,113 @@ int main()
     s1.insert("Hp2");
     s1.insert("Hp3");
     s1.insert("Hp4");
-
+    */
     set<string>::iterator itr;
-    for (itr = s1.begin(); itr != s1.end(); itr++)
-    {
-        //cout << distance(s1.begin(), itr) << "-" << *itr << endl;
-    }
-
-    //set<string>::iterator itr;
     int i = 0;
     for (itr = s1.begin(); itr != s1.end(); itr++)
     {
         //cout << *itr << endl;
+        //cout << distance(s1.begin(), itr) << "-" << *itr << endl;
         m1.insert(pair<int, string>(i, *itr));
         i++;
     }
 
+    ifstream file2;
+    file2.open("city_plan_1.txt");
+
+    if (!file2)
+    {
+        cerr << "File cannot be opened!";
+        exit(1);
+    }
+    //int weight = 0;
+
+    //Okumaya başla!
+    int weight_GPtoChx = 0;
+
+    int point_GP = positionSet(s1, "GP"), point_Hipp = positionSet(s1, "Hipp"), point_Chx, weight_GPtoHipp;
+
+    while (!file2.eof())
+    {
+        // "," e kadar oku. String olarak al.
+        getline(file2, source, ',');
+        getline(file2, destination, ',');
+        getline(file2, cop, '\n');
+
+        int c1 = source.find("Ch");
+        int c2 = destination.find("GP");
+
+        int c3 = source.find("GP");
+        int c4 = destination.find("Ch");
+
+        if ((c1 != -1 && c2 != -1) || (c3 != -1 && c4 != -1))
+        {
+            if (weight_GPtoChx == 0 || stoi(cop) < weight_GPtoChx)
+            {
+                weight_GPtoChx = stoi(cop);
+                if (c1 != -1 && c2 != -1)
+                {
+                    point_Chx = positionSet(s1, source);
+                    //cout << "Clotest:" << weight_GPtoChx << " Point:" << source << endl;
+                }
+                else if (c3 != -1 && c4 != -1)
+                {
+                    point_Chx = positionSet(s1, destination);
+                    //cout << "Clotest:" << weight_GPtoChx << " Point:" << destination << endl;
+                }
+            }
+            /*else if (stoi(cop) < clotest)
+            {
+                clotest = stoi(cop);
+                if (c1 != -1 && c2 != -1)
+                {
+                    point_Chx = positionSet(s1, source);
+                    cout << "CLotest:" << clotest << " Point:" << source << endl;
+                }
+                else if (c3 != -1 && c4 != -1)
+                {
+                    point_Chx = positionSet(s1, destination);
+                    cout << "CLotest:" << clotest << " Point:" << destination << endl;
+                }
+            }*/
+        }
+
+        int gphipp1 = source.find("GP");
+        int gphipp2 = destination.find("Hipp");
+
+        int gphipp3 = source.find("Hipp");
+        int gphipp4 = destination.find("GP");
+
+        if ((gphipp1 != -1 && gphipp2 != -1) || (gphipp3 != -1 && gphipp4 != -1))
+        {
+            weight_GPtoHipp = stoi(cop);
+            cout << "Hippodrom Weight:" << weight_GPtoHipp << " Hippodrom:" << positionSet(s1, "Hipp") << endl;
+        }
+
+        int index1 = source.find("Hp");
+        int index2 = destination.find("Hp");
+
+        int index3 = source.find("Hipp");
+        int index4 = destination.find("Bas");
+
+        int index5 = source.find("Bas");
+        int index6 = destination.find("Hipp");
+
+        /*cout << index1 << " | " << index2 << " | " << index3 << " | " << index4 << " | " << index5 << " | " << index6 << endl;
+
+        cout << "g.addEdge(" << source << "," << destination << "," << stoi(cop) << endl;*/
+
+        if (!((index1 != -1 && index2 != -1) || (index3 != -1 && index4 != -1) || (index5 != -1 && index6 != -1)))
+        {
+
+            /*cout << "g.addEdge(" << source << "," << destination << "," << stoi(cop) << endl;
+            g.addEdge(source, destination, stoi(cop), s1);*/
+            g.addEdge(source, destination, stoi(cop), s1);
+            //cout << "ENRTY!" << endl;
+        }
+        //cout << "---------------" << endl;
+    }
+    /*
     g.addEdge("GP", "Hipp", 1200, s1);
     g.addEdge("GP", "Ch2", 2000, s1);
     g.addEdge("GP", "Bas3", 9, s1);
@@ -220,15 +387,20 @@ int main()
     g.addEdge("Hp3", "Bas2", 3, s1);
     g.addEdge("Bas2", "Hp2", 18, s1);
     //addEdge(adj, "Hp4", "Hp2", 5, s1);
+    */
 
-    map<int, int> istenilen = g.primMST(m1);
+    map<string, int> istenilen = g.primMST(m1, point_GP, point_Hipp, point_Chx, weight_GPtoHipp, weight_GPtoChx);
 
-    map<int, int>::iterator it;
+    sort(istenilen);
+    /*map<string, int>::iterator it;
     for (it = istenilen.begin(); it != istenilen.end(); ++it)
     {
         cout << '\t' << it->first << '\t' << it->second << '\n';
     }
-    cout << endl;
+    cout << endl;*/
+    multimap<int, int> verilen;
+
+    verilen.insert(pair<int, int>(3, 5));
 
     return 0;
 }
