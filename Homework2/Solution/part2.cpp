@@ -63,18 +63,18 @@ void printPath(int parent[], int j, int a, set<string> s1)
 
     //printf("%d ", j);
     std::advance(it, j);
-    cout << *it << " ";
+    cout << *it << ' '; /////////////////////////////////
 }
 
 // A utility function to print
 // the constructed distance
 // array
-int printSolution(int dist[], int n, int parent[], set<string> s1)
+void printSolution(int dist[], int n, int parent[], set<string> s1)
 {
     int src = 0;
     std::set<string>::iterator it = s1.begin();
     std::advance(it, src);
-    cout << *it << " ";
+    cout << *it << ' '; /////////////////////////////////////////
     //printf("Vertex\t Distance\tPath");
 
     for (int i = 1; i < 2; i++)
@@ -82,7 +82,7 @@ int printSolution(int dist[], int n, int parent[], set<string> s1)
 
         //printf("\n%d -> %d \t\t %d\t\t%d ", src, i, dist[i], src);
         printPath(parent, i, dist[i], s1);
-        cout << dist[i] << "\n";
+        cout << dist[i] << '\n';
     }
 }
 
@@ -179,7 +179,7 @@ int main()
 
     string line;
     string source, destination, cop;
-    int weight = 0;
+    //int weight = 0;
 
     //Okumaya başla!
     while (!file1.eof())
@@ -188,18 +188,20 @@ int main()
         getline(file1, source, ',');
         getline(file1, destination, ',');
         getline(file1, cop, '\n');
+        int index1 = source.find("E");
+        int index2 = destination.find("E");
         // E lileri alma. -> kümeye kaydet.
-        if (source.find("E") == -1)
+        if (index1 == -1)
         {
             s1.insert(source);
         }
-        if (destination.find("E") == -1)
+        if (index2 == -1)
         {
             s1.insert(destination);
         }
     }
 
-    const int counterSpot = s1.size();
+    //const int counterSpot = s1.size();
     //cout << counterSpot << endl;
 
     int graph[V][V];
@@ -215,7 +217,7 @@ int main()
     set<string>::iterator itr;
     for (itr = s1.begin(); itr != s1.end(); itr++)
     {
-        cout << distance(s1.begin(), itr) << "-" << *itr << endl;
+        //cout << distance(s1.begin(), itr) << "-" << *itr << endl;
     }
 
     ifstream file2;
@@ -236,9 +238,13 @@ int main()
         getline(file2, destination, ',');
         getline(file2, cop, '\n');
         // E li eşleşme var mı?
-        if (((source.find("E") == -1) && (destination.find("E") == -1)) && !((source.find("S") != -1) && (destination.find("S") != -1)))
+        int index1 = source.find("E");
+        int index2 = destination.find("E");
+        int index3 = source.find("S");
+        int index4 = destination.find("S");
+        if (((index1 == -1) && (index2 == -1)) && !((index3 != -1) && (index4 != -1)))
         {
-            cout << source << "-" << destination << endl;
+            //cout << source << "-" << destination << endl;
             for (itr = s1.begin(); itr != s1.end(); itr++)
             {
 
@@ -309,14 +315,14 @@ int main()
     // S4 8
     // Mo 9
     //graph[3][5] = 1;
-    for (int i = 0; i < 10; i++)
+    /*for (int i = 0; i < 10; i++)
     {
         for (int j = 0; j < 10; j++)
         {
             cout << graph[i][j] << "\t";
         }
         cout << endl;
-    }
+    }*/
 
     dijkstra(graph, begin, s1);
     return 0;
