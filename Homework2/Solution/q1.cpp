@@ -1,6 +1,10 @@
 // STL implementation of Prim's algorithm for MST
 #include <bits/stdc++.h>
-#include <algorithm>
+#include <iostream>
+//#include <algorithm>
+#include <set>
+#include <vector>
+#include <map>
 using namespace std;
 #define INF 0x3f3f3f3f
 
@@ -71,7 +75,7 @@ void sort(map<string, int> &M)
     for (auto &it : A)
     {
 
-        cout << it.first << ' ' << it.second << endl;
+        cout << it.first << ',' << it.second << endl;
         totalCost = totalCost + it.second;
     }
     cout << totalCost << '\n';
@@ -168,14 +172,14 @@ map<string, int> Graph::primMST(map<int, string> m1, int point_GP, int point_Hip
             if (inMST[v] == false && key[v] > weight)
             {
                 // Updating key of v
-                if (v != 4 && v != 6)
+                if (v != point_Hipp && v != point_Chx)
                 {
                     key[v] = weight;
                 }
 
                 pq.push(make_pair(key[v], v));
 
-                if (v != 4 && v != 6)
+                if (v != point_Hipp && v != point_Chx)
                 {
                     parent[v] = u;
                 }
@@ -202,9 +206,7 @@ map<string, int> Graph::primMST(map<int, string> m1, int point_GP, int point_Hip
 int main()
 {
     // create the graph given in above fugure
-    int V = 11;
-    Graph g(V);
-
+    string filename = "city_plan_1.txt";
     // making above shown graph
     /*
     g.addEdge(0, 1, 4);
@@ -224,7 +226,7 @@ int main()
     */
 
     ifstream file1;
-    file1.open("city_plan_1.txt");
+    file1.open(filename);
     set<string> s1;
 
     if (!file1)
@@ -248,6 +250,9 @@ int main()
         s1.insert(source);
         s1.insert(destination);
     }
+
+    int V = s1.size();
+    Graph g(V);
 
     map<int, string> m1;
     /*
@@ -274,7 +279,7 @@ int main()
     }
 
     ifstream file2;
-    file2.open("city_plan_1.txt");
+    file2.open(filename);
 
     if (!file2)
     {
@@ -300,11 +305,13 @@ int main()
 
         int c3 = source.find("GP");
         int c4 = destination.find("Ch");
-
+        //cout << "inhere1" << endl;
         if ((c1 != -1 && c2 != -1) || (c3 != -1 && c4 != -1))
         {
+            //cout << "inhere2" << endl;
             if (weight_GPtoChx == 0 || stoi(cop) < weight_GPtoChx)
             {
+                //cout << "inhere3" << endl;
                 weight_GPtoChx = stoi(cop);
                 if (c1 != -1 && c2 != -1)
                 {
@@ -342,7 +349,7 @@ int main()
         if ((gphipp1 != -1 && gphipp2 != -1) || (gphipp3 != -1 && gphipp4 != -1))
         {
             weight_GPtoHipp = stoi(cop);
-            cout << "Hippodrom Weight:" << weight_GPtoHipp << " Hippodrom:" << positionSet(s1, "Hipp") << endl;
+            //cout << "Hippodrom Weight:" << weight_GPtoHipp << " Hippodrom:" << positionSet(s1, "Hipp") << endl;
         }
 
         int index1 = source.find("Hp");
@@ -354,9 +361,9 @@ int main()
         int index5 = source.find("Bas");
         int index6 = destination.find("Hipp");
 
-        /*cout << index1 << " | " << index2 << " | " << index3 << " | " << index4 << " | " << index5 << " | " << index6 << endl;
+        //cout << index1 << " | " << index2 << " | " << index3 << " | " << index4 << " | " << index5 << " | " << index6 << endl;
 
-        cout << "g.addEdge(" << source << "," << destination << "," << stoi(cop) << endl;*/
+        //cout << "g.addEdge(" << source << "," << destination << "," << stoi(cop) << endl;
 
         if (!((index1 != -1 && index2 != -1) || (index3 != -1 && index4 != -1) || (index5 != -1 && index6 != -1)))
         {
@@ -391,16 +398,64 @@ int main()
 
     map<string, int> istenilen = g.primMST(m1, point_GP, point_Hipp, point_Chx, weight_GPtoHipp, weight_GPtoChx);
 
-    sort(istenilen);
+    ifstream file3;
+    file3.open(filename);
+
+    if (!file3)
+    {
+        cerr << "File cannot be opened!";
+        exit(1);
+    }
+
+    //int weight = 0;
+    map<string, int> istenilenson;
+    //Okumaya başla!
+    while (!file3.eof())
+    {
+        // "," e kadar oku. String olarak al.
+        getline(file3, source, ',');
+        getline(file3, destination, ',');
+        getline(file3, cop, '\n');
+
+        //cout << "GIRDI1" << endl;
+        //cout << source << "," << destination << "," << stoi(cop) << endl;
+        //cout << "DOSYA *** VS *** BIZIM " << endl;
+        map<string, int>::iterator it;
+        for (it = istenilen.begin(); it != istenilen.end(); ++it)
+        {
+            //cout << "GIRDI2" << endl;
+            //cout << it->first.substr(0, it->first.find(',')) << "--" << it->first.substr(it->first.find(',') + 1, it->first.length()) << endl;
+            //cout << it->first.substr(0, it->first.find(',')) << "," << it->first.substr(it->first.find(','), it->first.length()) << "," << it->second << endl;
+
+            if (source == it->first.substr(0, it->first.find(',')) && destination == it->first.substr(it->first.find(',') + 1, it->first.length()) && stoi(cop) == it->second)
+            {
+                //cout << "MATCH" << endl;
+                istenilenson.insert(pair<string, int>(source + "," + destination, it->second));
+            }
+            else if (destination == it->first.substr(0, it->first.find(',')) && source == it->first.substr(it->first.find(',') + 1, it->first.length()) && stoi(cop) == it->second)
+            {
+                //cout << "TERSMATCH" << endl;
+                istenilenson.insert(pair<string, int>(source + "," + destination, it->second));
+            }
+        }
+        //cout << endl;
+
+        s1.insert(source);
+        s1.insert(destination);
+    }
+
+    //sort(istenilen);
+    //cout << "--------------------";
+    sort(istenilenson);
     /*map<string, int>::iterator it;
     for (it = istenilen.begin(); it != istenilen.end(); ++it)
     {
         cout << '\t' << it->first << '\t' << it->second << '\n';
     }
     cout << endl;*/
-    multimap<int, int> verilen;
+    //multimap<int, int> verilen;
 
-    verilen.insert(pair<int, int>(3, 5));
+    //verilen.insert(pair<int, int>(3, 5));
 
     return 0;
 }
