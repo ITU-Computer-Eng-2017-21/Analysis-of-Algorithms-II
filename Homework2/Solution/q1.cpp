@@ -80,7 +80,7 @@ void sort(map<string, int> &M)
     for (auto &it : A)
     {
 
-        cout << it.first << ',' << it.second << endl;
+        cout << it.first << ' ' << it.second << '\n';
         totalCost = totalCost + it.second;
     }
     cout << totalCost << '\n';
@@ -201,7 +201,7 @@ map<string, int> Graph::primMST(map<int, string> m1, int point_GP, int point_Hip
             //cout << m1[parent[i]] << "," << m1[i] << "," << key[i] << "\n";
             //printf("%d - %d\n", parent[i], i);
 
-            mx.insert(pair<string, int>(m1[parent[i]] + "," + m1[i], key[i]));
+            mx.insert(pair<string, int>(m1[parent[i]] + " " + m1[i], key[i]));
         }
     }
     return mx;
@@ -211,7 +211,7 @@ map<string, int> Graph::primMST(map<int, string> m1, int point_GP, int point_Hip
 int main()
 {
     // create the graph given in above fugure
-    string filename = "city_plan_1.txt";
+    string filename = "city_plan_2.txt";
     // making above shown graph
     /*
     g.addEdge(0, 1, 4);
@@ -432,15 +432,15 @@ int main()
             //cout << it->first.substr(0, it->first.find(',')) << "--" << it->first.substr(it->first.find(',') + 1, it->first.length()) << endl;
             //cout << it->first.substr(0, it->first.find(',')) << "," << it->first.substr(it->first.find(','), it->first.length()) << "," << it->second << endl;
 
-            if (source == it->first.substr(0, it->first.find(',')) && destination == it->first.substr(it->first.find(',') + 1, it->first.length()) && stoi(cop) == it->second)
+            if (source == it->first.substr(0, it->first.find(' ')) && destination == it->first.substr(it->first.find(' ') + 1, it->first.length()) && stoi(cop) == it->second)
             {
                 //cout << "MATCH" << endl;
-                istenilenson.insert(pair<string, int>(source + "," + destination, it->second));
+                istenilenson.insert(pair<string, int>(source + " " + destination, it->second));
             }
-            else if (destination == it->first.substr(0, it->first.find(',')) && source == it->first.substr(it->first.find(',') + 1, it->first.length()) && stoi(cop) == it->second)
+            else if (destination == it->first.substr(0, it->first.find(' ')) && source == it->first.substr(it->first.find(' ') + 1, it->first.length()) && stoi(cop) == it->second)
             {
                 //cout << "TERSMATCH" << endl;
-                istenilenson.insert(pair<string, int>(source + "," + destination, it->second));
+                istenilenson.insert(pair<string, int>(source + " " + destination, it->second));
             }
         }
         //cout << endl;
