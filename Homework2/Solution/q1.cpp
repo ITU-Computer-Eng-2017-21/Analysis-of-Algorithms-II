@@ -1,7 +1,12 @@
 // STL implementation of Prim's algorithm for MST
 #include <bits/stdc++.h>
-#include <iostream>
-//#include <algorithm>
+#include <string>   // string operation
+#include <fstream>  // file operation
+#include <sstream>  // string stream operaiton
+#include <iostream> // basic library for cout
+#include <stdio.h>
+#include <limits.h>
+#include <algorithm>
 #include <set>
 #include <vector>
 #include <map>
@@ -235,7 +240,7 @@ int main()
         exit(1);
     }
 
-    string line;
+    //string line;
     string source, destination, cop;
     //int weight = 0;
 
