@@ -1,8 +1,3 @@
-// C program for Dijkstra's single
-// source shortest path algorithm.
-// The program is for adjacency matrix
-// representation of the graph.
-
 /*  
     @author: Barış İncesu
     @ID: 150170092
@@ -13,13 +8,19 @@
     Run:
     ./150170092 euroleague.csv
 */
-#include <stdio.h>
-#include <limits.h>
-#include <string>   // string operation
-#include <fstream>  // file operation
-#include <sstream>  // string stream operaiton
+
 #include <iostream> // basic library for cout
+
+#include <fstream> // file operation
+//#include <stdio.h>
+//#include <limits.h>
+#include <string> // string operation
 #include <set>
+#include <vector>
+#include <algorithm>
+
+//#include <sstream> // string stream operaiton
+
 using namespace std;
 
 // Number of vertices
@@ -161,6 +162,35 @@ void dijkstra(int graph[V][V], int src, set<string> s1)
     printSolution(dist, V, parent, s1);
 }
 
+//function to return position in map
+int positionSet(set<string> s1, string Ch)
+{
+    set<string>::iterator itr;
+    int position = 0;
+    for (itr = s1.begin(); itr != s1.end(); itr++)
+    {
+        //cout << *itr << endl;
+        if (*itr == Ch)
+        {
+            position = distance(s1.begin(), itr);
+        }
+        //m1.insert(pair<int, string>(0, *itr));
+    }
+    return position;
+}
+
+bool isBadPoint(vector<string> v, string location)
+{
+    vector<string>::iterator itr;
+    for (itr = v.begin(); itr != v.end(); itr++)
+    {
+        if (*itr == location)
+        {
+            return true;
+        }
+    }
+    return false;
+}
 // Driver Code
 int main()
 {
@@ -170,7 +200,7 @@ int main()
     // graph discussed above
 
     ifstream file1;
-    file1.open("path_info_1.txt");
+    file1.open(filename);
     set<string> s1;
 
     if (!file1)
@@ -183,6 +213,7 @@ int main()
     string source, destination, cop;
     //int weight = 0;
 
+    vector<string> badPoints;
     //Okumaya başla!
     while (!file1.eof())
     {
@@ -190,19 +221,62 @@ int main()
         getline(file1, source, ',');
         getline(file1, destination, ',');
         getline(file1, cop, '\n');
+
         int index1 = source.find("E");
         int index2 = destination.find("E");
+
         // E lileri alma. -> kümeye kaydet.
-        if (index1 == -1)
+        cout << "Okunan satir: " << source << ',' << destination << ',' << cop << endl;
+        cout << index1 << " " << index2 << endl;
+        if ((index1 != -1 || index2 != -1) && stoi(cop) < 5)
         {
-            s1.insert(source);
+            cout << "----------------------------------Sikinti Durum" << endl;
+            if (index1 == -1)
+            {
+                cout << "------------------ Bad Point Eklendi:" << source << endl;
+                badPoints.push_back(source);
+            }
+            if (index2 == -1)
+            {
+                cout << "------------------ Bad Point Eklendi:" << destination << endl;
+                badPoints.push_back(destination);
+            }
         }
-        if (index2 == -1)
+        else
         {
-            s1.insert(destination);
+            if (!isBadPoint(badPoints, source) && index1 == -1)
+            {
+                s1.insert(source);
+                cout << "Eklenen Nokta: " << source << endl;
+            }
+            if (!isBadPoint(badPoints, destination) && index2 == -1)
+            {
+                s1.insert(destination);
+                cout << "Eklenen Nokta: " << destination << endl;
+            }
         }
     }
+    cout << "BURDAYIM1" << endl;
 
+    set<string>::iterator itr;
+
+    for (itr = s1.begin(); itr != s1.end(); itr++)
+    {
+        cout << *itr << endl;
+        if (isBadPoint(badPoints, *itr))
+        {
+            s1.erase(*itr);
+            s1.insert("deneme");
+            cout << "BURDAYIM4" << endl;
+        }
+    }
+    //set<string>::iterator itr;
+    for (itr = s1.begin(); itr != s1.end(); itr++)
+    {
+        cout << distance(s1.begin(), itr) << "-" << *itr << endl;
+    }
+
+    cout << "BURDAYIM3" << endl;
     //const int counterSpot = s1.size();
     //cout << counterSpot << endl;
 
@@ -216,14 +290,14 @@ int main()
         }
     }
 
-    set<string>::iterator itr;
+    //set<string>::iterator itr;
     for (itr = s1.begin(); itr != s1.end(); itr++)
     {
-        //cout << distance(s1.begin(), itr) << "-" << *itr << endl;
+        cout << distance(s1.begin(), itr) << "-" << *itr << endl;
     }
 
     ifstream file2;
-    file2.open("path_info_1.txt");
+    file2.open(filename);
 
     if (!file2)
     {
@@ -242,10 +316,13 @@ int main()
         // E li eşleşme var mı?
         int index1 = source.find("E");
         int index2 = destination.find("E");
-        int index3 = source.find("S");
-        int index4 = destination.find("S");
-        if (((index1 == -1) && (index2 == -1)) && !((index3 != -1) && (index4 != -1)))
+        //int index3 = source.find("S");
+        //int index4 = destination.find("S");
+
+        cout << "Matrislenen satir: " << source << ',' << destination << ',' << cop << endl;
+        if ((index1 == -1) && (index2 == -1) && !isBadPoint(badPoints, source) && !isBadPoint(badPoints, destination))
         {
+            cout << "Matrislenebilir" << endl;
             //cout << source << "-" << destination << endl;
             for (itr = s1.begin(); itr != s1.end(); itr++)
             {
@@ -261,6 +338,7 @@ int main()
             }
             graph[m][n] = stoi(cop);
             graph[n][m] = stoi(cop);
+            //cout << "Eklenen Nokta: " << source << endl;
         }
         /*if (((source.find("S") != -1) && (destination.find("S") != -1)))
         {
@@ -317,14 +395,14 @@ int main()
     // S4 8
     // Mo 9
     //graph[3][5] = 1;
-    /*for (int i = 0; i < 10; i++)
+    for (int i = 0; i < 10; i++)
     {
         for (int j = 0; j < 10; j++)
         {
             cout << graph[i][j] << "\t";
         }
         cout << endl;
-    }*/
+    }
 
     dijkstra(graph, begin, s1);
     return 0;
