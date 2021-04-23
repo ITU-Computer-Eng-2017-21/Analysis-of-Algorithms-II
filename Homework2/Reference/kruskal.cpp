@@ -192,8 +192,8 @@ void Graph::PrintKruskalMST()
 	// Initializes the weight of the MST to 0
 	int weightOfMST = 0;
 
-	cout << endl
-		 << "---Kruskal's Algorithm----" << endl;
+	cout << endl;
+	cout << "---Kruskal's Algorithm----" << endl;
 	cout << "Edge  : Edge Weight" << endl;
 
 	for (int i = 0; i < kruskalMST.size(); i++)
