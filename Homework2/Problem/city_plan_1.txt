@@ -9,10 +9,10 @@ Hipp,Bas1,14
 Hipp,Ch2,13
 Hipp,Hp2,10
 Bas1,Ch2,15
-Bas2,Hp2,18
+Ch2,Bas3,4
 Bas3,Hp4,16
 Bas3,Hp3,11
-Ch2,Bas3,4
 Hp3,Hp4,17
 Hp3,Bas2,3
+Bas2,Hp2,18
 Hp4,Hp2,5
