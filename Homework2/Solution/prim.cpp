@@ -122,7 +122,7 @@ map<string, int> primMST(vector<pair<int, int>> adj[], int V, map<int, string> m
     }
     return mx;
 }
-
+/*
 bool cmp(pair<string, int> &a, pair<string, int> &b)
 {
     return a.second < b.second;
@@ -155,7 +155,7 @@ void sort(map<string, int> &M)
     }
     cout << totalCost << '\n';
 }
-
+*/
 int positionSet(set<string> s1, string Ch)
 {
     set<string>::iterator itr;
@@ -175,7 +175,8 @@ int positionSet(set<string> s1, string Ch)
 // Driver program to test methods of graph class
 int main()
 {
-    string filename = "city_plan_1.txt";
+    string filename;
+    cin >> filename;
 
     ifstream file1;
     file1.open(filename);
@@ -365,7 +366,25 @@ int main()
 
     //sort(istenilen);
     //cout << "--------------------";
-    sort(istenilenson);
+    //sort(istenilenson);
+
+    typedef std::function<bool(std::pair<std::string, int>, std::pair<std::string, int>)> Comparator;
+    // Defining a lambda function to compare two pairs. It will compare two pairs using second field
+    Comparator compFunctor =
+        [](std::pair<std::string, int> elem1, std::pair<std::string, int> elem2) {
+            return elem1.second < elem2.second;
+        };
+    // Declaring a set that will store the pairs using above comparision logic
+    std::set<std::pair<std::string, int>, Comparator> setOfWords(istenilenson.begin(), istenilenson.end(), compFunctor);
+    // Iterate over a set using range base for loop
+    // It will display the items in sorted order of values
+    int totalCost = 0;
+    for (std::pair<std::string, int> element : setOfWords)
+    {
+        cout << element.first.substr(0, element.first.find(' ')) << ' ' << element.first.substr(element.first.find(' ') + 1, element.first.length()) << ' ' << element.second << '\n';
+        totalCost = totalCost + element.second;
+    }
+    cout << totalCost << '\n';
 
     // making above shown graph
     /*
