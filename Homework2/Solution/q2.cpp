@@ -164,6 +164,8 @@ void dijkstra(int graph[V][V], int src, set<string> s1)
 // Driver Code
 int main()
 {
+    string filename;
+    cin >> filename;
     // Let us create the example
     // graph discussed above
 
