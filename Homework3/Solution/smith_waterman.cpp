@@ -1,12 +1,19 @@
+/*  
+    @author: Barış İncesu
+    @ID: 150170092
+    @date :14.05.2021
+
+    Compile: g++ -std=c++11 -Wall -Werror 150170092.cpp -o 150170092
+    Run: ./150170092
+    Calico: python -m calico.cli <testFileName>.t
+*/
+
 #include <iostream>
 #include <string>
 #include <fstream>
 #include <vector>
 #include <set>
 #include <bits/stdc++.h>
-
-//#include <algorithm>
-//#include <initializer_list>
 
 using namespace std;
 
