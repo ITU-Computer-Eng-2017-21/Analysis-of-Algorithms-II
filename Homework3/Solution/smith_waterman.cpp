@@ -160,34 +160,37 @@ void sw(string s1, string s2, string fileName)
             cout << endl;
         }*/
 
-    outFile << "Score: " << target_length << " Sequence(s): ";
+    outFile << "Score: " << target_length << " Sequence(s):";
     //cout << "Score: " << target_length << " Sequence(s): ";
-
-    set<string> outputvector;
-
-    for (int i = 0; i < target_number; i++)
+    if (target_length > 0)
     {
+        set<string> outputvector;
 
-        int end = positions[i] - 1;
-        int start = end - target_length + 1;
-        string outputx = s2.substr(start, target_length);
-        //cout << positions[i] << endl;
-        //cout << "target: " << outputx << endl;
-        outputvector.insert(outputx);
-    }
-    //sort(outputvector.begin(), outputvector.end());
-    for (auto i = outputvector.begin(); i != outputvector.end(); ++i)
-    {
-        outFile << "\"" << *i << "\""
-                << " ";
-        //cout << "\"" << *i << "\"" << " ";
+        for (int i = 0; i < target_number; i++)
+        {
+
+            int end = positions[i] - 1;
+            int start = end - target_length + 1;
+            string outputx = s2.substr(start, target_length);
+            //cout << positions[i] << endl;
+            //cout << "target: " << outputx << endl;
+            outputvector.insert(outputx);
+        }
+        //sort(outputvector.begin(), outputvector.end());
+        for (auto i = outputvector.begin(); i != outputvector.end(); ++i)
+        {
+            outFile << " "
+                    << "\"" << *i << "\"";
+            //cout << "\"" << *i << "\"" << " ";
+        }
+
+        //cout << endl;
+        // information_tunction_yesişim1_esişim2_kesişim3
+        //cout << "Hello World!" << endl;
+
+        //cout << "------------------------------------------------" << endl;
     }
     outFile << "\n";
-    //cout << endl;
-    // information_tunction_yesişim1_esişim2_kesişim3
-    //cout << "Hello World!" << endl;
-
-    //cout << "------------------------------------------------" << endl;
 }
 
 int main()
