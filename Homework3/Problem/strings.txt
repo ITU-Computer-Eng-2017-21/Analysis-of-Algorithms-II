@@ -1,5 +1,5 @@
 information
-fanimatio
+funimatio
 malfunction
 automative
 medication
@@ -14,7 +14,7 @@ conformity
 component
 examination
 predict
-disctrict
+district
 fountain
 personality
 qualify
