@@ -17,18 +17,24 @@
 
 using namespace std;
 
-int max(int a, int b, int c)
+int max(int a, int b, int c, int d)
 {
-    int val = a;
-    if (b > val)
+    int maxValue = a;
+
+    if (b > maxValue)
     {
-        val = b;
+        maxValue = b;
     }
-    if (c > val)
+    if (c > maxValue)
     {
-        val = c;
+        maxValue = c;
     }
-    return val;
+    if (d > maxValue)
+    {
+        maxValue = d;
+    }
+
+    return maxValue;
 }
 
 bool compare(int i, int j, string s1, string s2)
@@ -47,14 +53,20 @@ void sw(string s1, string s2, string fileName)
 {
 }
 
-int main()
+int main(int argc, char **argv)
 {
-    string filename;
-    cin >> filename;
+    string inputFileName = argv[1];
+    string outpuFileName = argv[2];
+    //cin >> filename;
+
+    int match = stoi(argv[3]);
+    int mismatch = stoi(argv[4]);
+    int gap = stoi(argv[5]);
+
     //filename = "strings.txt";
 
     ifstream file1;
-    file1.open(filename);
+    file1.open(inputFileName);
 
     if (!file1)
     {
@@ -82,7 +94,7 @@ int main()
         for (unsigned int j = i + 1; j < v1.size(); j++)
         {
             ofstream myfile;
-            myfile.open("150170092_result.txt", ios::out | ios::app);
+            myfile.open(outpuFileName, ios::out | ios::app);
             s1 = v1.at(i);
             s2 = v1.at(j);
             //sw(s1, s2, fileName);
@@ -104,19 +116,19 @@ int main()
             {
                 for (int column = 1; column < lengthOfs2 + 1; column++)
                 {
-                    //int left_down = scoreMatrix[row][column - 1] - 2;
-                    //int right_up = scoreMatrix[row - 1][column] - 2;
+                    int left_down = scoreMatrix[row][column - 1] + gap;
+                    int right_up = scoreMatrix[row - 1][column] + gap;
                     int diag = scoreMatrix[row - 1][column - 1];
 
                     if (compare(row, column, s1, s2))
                     {
-                        diag = diag + 1;
-                        scoreMatrix[row][column] = diag;
+                        diag += match;
+                        //scoreMatrix[row][column] = diag;
                     }
                     else
                     {
-                        diag = 0;
-                        scoreMatrix[row][column] = diag;
+                        diag += mismatch;
+                        //scoreMatrix[row][column] = diag;
                     }
                     /*if (left_down < 0)
                     {
@@ -129,36 +141,38 @@ int main()
                     if (diag < 0)
                     {
                         diag = 0;
-                    }
-                    int indel = max(left_down, right_up, diag);
-                    scoreMatrix[row][column] = indel;*/
+                    }*/
+                    int indel = max(left_down, right_up, diag, 0);
+                    scoreMatrix[row][column] = indel;
                 }
             }
 
-            int target_length = 0;
+            int maximumNumberInMatrix = 0;
+
+            for (int i = 0; i < lengthOfs1 + 1; i++)
+            {
+                for (int j = 0; j < lengthOfs2 + 1; j++)
+                {
+                    if (scoreMatrix[i][j] > maximumNumberInMatrix)
+                    {
+                        maximumNumberInMatrix = scoreMatrix[i][j];
+                    }
+                }
+            }
             int target_number = 0;
             for (int i = 0; i < lengthOfs1 + 1; i++)
             {
                 for (int j = 0; j < lengthOfs2 + 1; j++)
                 {
-                    if (scoreMatrix[i][j] > target_length)
-                    {
-                        target_length = scoreMatrix[i][j];
-                    }
-                }
-            }
-
-            for (int i = 0; i < lengthOfs1 + 1; i++)
-            {
-                for (int j = 0; j < lengthOfs2 + 1; j++)
-                {
-                    if (scoreMatrix[i][j] == target_length)
+                    if (scoreMatrix[i][j] == maximumNumberInMatrix)
                     {
                         target_number++;
                     }
                 }
             }
 
+            int target_length = 0;
+            int teksefer = 0;
             int positions[target_number];
             int offset = 0;
 
@@ -166,9 +180,18 @@ int main()
             {
                 for (int j = 0; j < lengthOfs2 + 1; j++)
                 {
-                    if (scoreMatrix[i][j] == target_length)
+                    if (scoreMatrix[i][j] == maximumNumberInMatrix)
                     {
-                        positions[offset] = j;
+                        int targeti = i;
+                        int targetj = j;
+                        while (teksefer != 1 && targeti >= 1 && targetj >= 1 && scoreMatrix[targeti][targetj] != 0)
+                        {
+                            targeti = targeti - 1;
+                            targetj = targetj - 1;
+                            target_length++;
+                        }
+                        teksefer = 1;
+                        positions[offset] = i;
                         offset++;
                     }
                 }
@@ -182,8 +205,8 @@ int main()
                 myfile << s1 << " - " << s2 << "\n";
                 cout << s1 << " - " << s2 << endl;
 
-                myfile << "Score: " << target_length << " Sequence(s):";
-                cout << "Score: " << target_length << " Sequence(s): ";
+                myfile << "Score: " << maximumNumberInMatrix << " Sequence(s):";
+                cout << "Score: " << maximumNumberInMatrix << " Sequence(s): ";
 
                 if (target_length > 0)
                 {
@@ -194,7 +217,12 @@ int main()
 
                         int end = positions[i] - 1;
                         int start = end - target_length + 1;
-                        string outputx = s2.substr(start, target_length);
+                        if (start < 0)
+                        {
+                            start = 0;
+                        }
+
+                        string outputx = s1.substr(start, target_length);
                         //cout << positions[i] << endl;
                         //cout << "target: " << outputx << endl;
                         outputvector.insert(outputx);
