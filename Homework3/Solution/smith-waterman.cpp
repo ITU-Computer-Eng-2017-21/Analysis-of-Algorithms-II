@@ -5,7 +5,7 @@
 
     Compile: g++ -std=c++11 -Wall -Werror 150170092.cpp -o 150170092
     Run: ./150170092
-    Calico: python -m calico.cli <testFileName>.t
+    Calico: python -m calico.cli <testFileName>.t inputFileName outputFileName match mismatch gap
 */
 
 #include <iostream>
@@ -16,7 +16,7 @@
 #include <bits/stdc++.h>
 
 using namespace std;
-
+// Function for max value
 int max(int a, int b, int c, int d)
 {
     int maxValue = a;
@@ -36,7 +36,7 @@ int max(int a, int b, int c, int d)
 
     return maxValue;
 }
-
+// compare letters for match or mismatch
 bool compare(int i, int j, string s1, string s2)
 {
     if (s1[i - 1] == s2[j - 1])
@@ -47,10 +47,6 @@ bool compare(int i, int j, string s1, string s2)
     {
         return false;
     }
-}
-
-void sw(string s1, string s2, string fileName)
-{
 }
 
 int main(int argc, char **argv)
@@ -83,7 +79,7 @@ int main(int argc, char **argv)
         v1.push_back(word);
     }
 
-    sort(v1.begin(), v1.end());
+    sort(v1.begin(), v1.end()); // sort for alphabetical order
     string s1 = "ABCTABS";
     string s2 = "ABCDABS";
 
@@ -94,6 +90,8 @@ int main(int argc, char **argv)
         for (unsigned int j = i + 1; j < v1.size(); j++)
         {
             ofstream myfile;
+            // std::ios::app is the open mode "append" meaning
+            // new data will be written to the end of the file.
             myfile.open(outpuFileName, ios::out | ios::app);
             s1 = v1.at(i);
             s2 = v1.at(j);
@@ -172,7 +170,12 @@ int main(int argc, char **argv)
             }
 
             int target_length = 0;
-            int teksefer = 0;
+            int password[target_number];
+            for (int i = 0; i < target_number; i++)
+            {
+                password[i] = 0;
+            }
+
             int positions[target_number];
             int offset = 0;
 
@@ -184,21 +187,18 @@ int main(int argc, char **argv)
                     {
                         int targeti = i;
                         int targetj = j;
-                        while (teksefer != 1 && targeti >= 1 && targetj >= 1 && scoreMatrix[targeti][targetj] != 0)
+                        while (targeti >= 1 && targetj >= 1 && scoreMatrix[targeti][targetj] != 0)
                         {
                             targeti = targeti - 1;
                             targetj = targetj - 1;
                             target_length++;
+                            password[offset] = password[offset] + 1;
                         }
-                        teksefer = 1;
                         positions[offset] = i;
                         offset++;
                     }
                 }
             }
-
-            // std::ios::app is the open mode "append" meaning
-            // new data will be written to the end of the file.
 
             if (myfile.is_open())
             {
@@ -216,13 +216,13 @@ int main(int argc, char **argv)
                     {
 
                         int end = positions[i] - 1;
-                        int start = end - target_length + 1;
+                        int start = end - password[i] + 1;
                         if (start < 0)
                         {
                             start = 0;
                         }
 
-                        string outputx = s1.substr(start, target_length);
+                        string outputx = s1.substr(start, password[i]);
                         //cout << positions[i] << endl;
                         //cout << "target: " << outputx << endl;
                         outputvector.insert(outputx);
